@@ -3,7 +3,7 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ModeScript } from "@/components/layout/mode-script";
-import { SITE_URL, SITE_NAME } from "@/lib/site";
+import { SITE_URL, SITE_NAME, CONTACT_EMAIL } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const spaceGrotesk = Space_Grotesk({
@@ -37,7 +37,7 @@ const jsonLd = {
   name: SITE_NAME,
   description: "Applied-AI consultancy building production agentic systems for operators.",
   url: SITE_URL,
-  email: "hello@[DOMAIN]",
+  email: CONTACT_EMAIL,
   areaServed: "US",
   address: { "@type": "PostalAddress", addressLocality: "Austin", addressRegion: "TX", addressCountry: "US" },
   founder: { "@type": "Person", name: "Ryan Harty" },

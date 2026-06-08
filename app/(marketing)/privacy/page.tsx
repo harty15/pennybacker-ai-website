@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy",
@@ -45,7 +46,7 @@ export default function PrivacyPage() {
           <div>
             <h2 className="text-h3 text-fg">Your choices</h2>
             <p className="mt-3">
-              Email us at <a href="mailto:hello@[DOMAIN]" className="text-accent">hello@[DOMAIN]</a> to ask
+              Email us at <a href={`mailto:${CONTACT_EMAIL}`} className="text-accent">{CONTACT_EMAIL}</a> to ask
               what we hold or to request deletion.
             </p>
           </div>

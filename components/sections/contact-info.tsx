@@ -1,5 +1,6 @@
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 const expect = [
   "A real engineer on the call — the one who'd do the work",
@@ -31,8 +32,8 @@ export function ContactInfo() {
 
       <div className="mt-8">
         <p className="font-mono text-eyebrow uppercase tracking-[0.16em] text-muted">Email</p>
-        <a href="mailto:hello@[DOMAIN]" className="mt-2 inline-block text-lead text-accent hover:opacity-80">
-          hello@[DOMAIN]
+        <a href={`mailto:${CONTACT_EMAIL}`} className="mt-2 inline-block text-lead text-accent hover:opacity-80">
+          {CONTACT_EMAIL}
         </a>
       </div>
 

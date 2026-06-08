@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Brandmark } from "./brandmark";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 const COLUMNS = [
   {
@@ -69,7 +70,7 @@ export function Footer() {
         <div className="mt-14 flex flex-col gap-2 border-t border-line pt-6 text-small text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {/* year set at build */}2026 Harty Consulting LLC, d/b/a Pennybacker AI.</p>
           <p>
-            hello@<span className="text-fg/70">[DOMAIN]</span> · Austin, Texas
+            {CONTACT_EMAIL.split("@")[0]}@<span className="text-fg/70">{CONTACT_EMAIL.split("@")[1]}</span> · Austin, Texas
           </p>
         </div>
       </Container>

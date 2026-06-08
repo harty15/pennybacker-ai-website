@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/cn";
-
-const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT;
+import { CONTACT_EMAIL, WEB3FORMS_ACCESS_KEY } from "@/lib/site";
 
 const interests = [
   { id: "roadmap", label: "Roadmap", desc: "Assess & plan" },
@@ -25,21 +24,33 @@ export function ContactForm() {
     const data = Object.fromEntries(new FormData(form).entries());
     setStatus("submitting");
 
-    if (!ENDPOINT) {
+    // No form service configured yet → hand off to the visitor's mail client.
+    if (!WEB3FORMS_ACCESS_KEY) {
       const body = `Name: ${data.name}\nEmail: ${data.email}\nCompany: ${data.company}\nInterest: ${interest}\n\n${data.message}`;
-      window.location.href = `mailto:hello@[DOMAIN]?subject=${encodeURIComponent(
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
         `Intro call — ${interest}`,
       )}&body=${encodeURIComponent(body)}`;
       setStatus("success");
       return;
     }
+
     try {
-      const res = await fetch(ENDPOINT, {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, interest }),
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `Intro call — ${interest}`,
+          from_name: "Pennybacker AI website",
+          name: data.name,
+          email: data.email,
+          company: data.company,
+          interest,
+          message: data.message,
+        }),
       });
-      if (!res.ok) throw new Error("bad status");
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error("bad status");
       setStatus("success");
     } catch {
       setStatus("error");
@@ -116,8 +127,8 @@ export function ContactForm() {
       {status === "error" && (
         <p className="mt-4 rounded-lg border border-accent/40 bg-accent/[0.06] px-4 py-3 text-small text-fg">
           Something went wrong. Email us directly at{" "}
-          <a href="mailto:hello@[DOMAIN]" className="text-accent underline">
-            hello@[DOMAIN]
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-accent underline">
+            {CONTACT_EMAIL}
           </a>
           .
         </p>

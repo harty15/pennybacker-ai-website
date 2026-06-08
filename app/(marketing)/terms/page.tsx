@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -43,7 +44,7 @@ export default function TermsPage() {
           <div>
             <h2 className="text-h3 text-fg">Contact</h2>
             <p className="mt-3">
-              Questions? <a href="mailto:hello@[DOMAIN]" className="text-accent">hello@[DOMAIN]</a>.
+              Questions? <a href={`mailto:${CONTACT_EMAIL}`} className="text-accent">{CONTACT_EMAIL}</a>.
             </p>
           </div>
         </div>
