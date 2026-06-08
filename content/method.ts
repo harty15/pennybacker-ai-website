@@ -1,0 +1,32 @@
+export const methodSteps = [
+  {
+    index: "01",
+    name: "Survey",
+    kicker: "Operational understanding",
+    body: "Every bridge starts with the ground. We embed with your operators and map how the work actually flows — systems, data, approvals, bottlenecks — before recommending anything.",
+    bullets: ["Stakeholder & workflow mapping", "Systems & data readiness", "Opportunity scoring", "Roadmap with honest ROI math"],
+    serviceHref: "/services/roadmap",
+    serviceLabel: "Explore Roadmap →",
+    vignette: { type: "weeks", chips: ["Listen · Wk 1–2", "Map · Wk 3–4", "Roadmap · Wk 5–6"] },
+  },
+  {
+    index: "02",
+    name: "Span",
+    kicker: "Production systems",
+    body: "With the survey done, we build the connection between plan and production. Small senior teams move from prototype to hardened system fast — every line of code carries the operational context from phase one.",
+    bullets: ["Production-grade architecture", "Custom agents & MCP integrations", "Working software in weeks", "Hardened against real data and permissions"],
+    serviceHref: "/services/build",
+    serviceLabel: "Explore Build →",
+    vignette: { type: "agents" },
+  },
+  {
+    index: "03",
+    name: "Sustain",
+    kicker: "Continuous improvement",
+    body: "Bridges are inspected and maintained, not abandoned at the ribbon-cutting. We track adoption, control cost, upgrade models as capabilities improve, and keep shipping new workflows.",
+    bullets: ["Usage & cost telemetry", "Model & capability upgrades", "Governance & access control", "New workflows every month"],
+    serviceHref: "/services/run",
+    serviceLabel: "Explore Run →",
+    vignette: { type: "weeks", chips: ["Monitor", "Optimize", "Extend"] },
+  },
+] as const;
