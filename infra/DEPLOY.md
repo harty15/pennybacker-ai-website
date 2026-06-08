@@ -115,3 +115,19 @@ in the build (canonical tags / sitemap) — today it defaults to the apex.
 - **Cost:** S3 pennies + CloudFront (1 TB/mo egress always-free tier) ≈ ~$0–2/mo at this traffic.
 - **Rollback / teardown:** `aws cloudformation delete-stack` (empty the bucket first).
 - **IaC choice:** CloudFormation for zero state-backend setup. Ask if you'd prefer Terraform or CDK.
+
+## DNS: Route 53 (what's actually live)
+
+Squarespace DNS can't point an apex at CloudFront (no ALIAS), so DNS hosting was
+moved to **Route 53** while the domain stays registered at Squarespace.
+
+- **Hosted zone:** `Z027934625TBBC6MRWKEF` (pennybacker-ai.com), in account 942011413954.
+- **Records** (see `infra/route53-records.json`): apex + `www` → A **alias** →
+  the CloudFront distribution; `MX` → `smtp.google.com`; SPF + Google DKIM TXT
+  (replicated from Squarespace so email is unchanged); the two ACM validation CNAMEs.
+- **Cutover:** Squarespace → Domain Nameservers → **Use custom nameservers**, set to
+  the zone's four `awsdns` nameservers. (DNSSEC left off.)
+- **Canonical:** `www` (apex + www both serve; `NEXT_PUBLIC_SITE_URL` defaults to
+  `https://www.pennybacker-ai.com`).
+- To change records later: edit `infra/route53-records.json` and
+  `aws route53 change-resource-record-sets --hosted-zone-id Z027934625TBBC6MRWKEF --change-batch file://infra/route53-records.json`.

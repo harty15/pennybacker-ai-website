@@ -1,0 +1,94 @@
+{
+  "Comment": "Pennybacker AI: site (CloudFront) + Google Workspace email",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "pennybacker-ai.com.",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "Z2FDTNDATAQYW2",
+          "DNSName": "d1cl3mech1pctz.cloudfront.net.",
+          "EvaluateTargetHealth": false
+        }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "www.pennybacker-ai.com.",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "Z2FDTNDATAQYW2",
+          "DNSName": "d1cl3mech1pctz.cloudfront.net.",
+          "EvaluateTargetHealth": false
+        }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "pennybacker-ai.com.",
+        "Type": "MX",
+        "TTL": 3600,
+        "ResourceRecords": [
+          {
+            "Value": "1 smtp.google.com."
+          }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "pennybacker-ai.com.",
+        "Type": "TXT",
+        "TTL": 3600,
+        "ResourceRecords": [
+          {
+            "Value": "\"v=spf1 include:_spf.google.com ~all\""
+          }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "google._domainkey.pennybacker-ai.com.",
+        "Type": "TXT",
+        "TTL": 3600,
+        "ResourceRecords": [
+          {
+            "Value": "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmGuGgX6IkNowXx9N2vsJYf9nWSCiVFs6xxQ9R4Trsa4Ypd4qD/J7EA8p2t3jEDX5YJHHy5PhqojWpp0AdhukzhBh8WIjaQsKhoQPGJ91bQbLsBE15/Uh07GB1fS5GlvQVQtilFJO+jYADEy7FnEd/56YvDYOY7xwF6p01k7HoAg8N9GIg02RAo9Fu6h5OYYOC\" \"+7KnasJft+Q9ptuSfAn0aOrQv/o0y06w7g+1xXU7m5adWHeRem0PYibPDOW9jFOLAuzzAMpnHF1x1ZQZsLGwDFDsOuD2f86Fls9pWFamslpYQhHkfc5FfIshWRw4zKfIcS3rEyiE+6Q7JseZ0vtuwIDAQAB\""
+          }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_82b19b7896279f1045fde12f90f001b2.pennybacker-ai.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "_45affd1f503bb0ba4100a9769c319621.jkddzztszm.acm-validations.aws."
+          }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_a84285b55deb649f01c0b756bc44c0e2.www.pennybacker-ai.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "_67a1d3639d36a3b48f4632fd9aeb9786.jkddzztszm.acm-validations.aws."
+          }
+        ]
+      }
+    }
+  ]
+}
