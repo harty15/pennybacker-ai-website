@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 import { work } from "@/content/work";
 
+// Emit a static sitemap.xml at build time (required for output: "export").
+export const dynamic = "force-static";
+
 const routes = [
   "",
   "/method",
