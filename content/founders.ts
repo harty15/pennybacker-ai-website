@@ -8,7 +8,7 @@ export const founders = [
   },
   {
     name: "Max Holter",
-    role: "Founder & Data Engineer",
+    role: "Lead Data Engineer",
     bio: "Data engineer and AI practitioner with experience at Meta, Coinbase, and Indeed. Builds production AI tools, data pipelines, and monitoring systems supporting high-stakes decision-making at scale.",
     linkedin: "https://www.linkedin.com/in/maxwell-holter/",
     initials: "M",
