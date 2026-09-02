@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { CONTACT_EMAIL } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Terms",
-  description: "Terms of use for the Pennybacker AI website.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Terms of Service",
+  description:
+    "Terms of service for the Pennybacker AI website.",
+  path: "/terms/",
+});
 
 export default function TermsPage() {
   return (
@@ -14,7 +17,7 @@ export default function TermsPage() {
       <Container className="max-w-3xl">
         <Eyebrow>Legal</Eyebrow>
         <h1 className="mt-4 text-h1">Terms of Use</h1>
-        <p className="mt-3 text-small text-muted">Last updated: June 2026 · [LEGAL-REVIEW — not legal advice as drafted]</p>
+        <p className="mt-3 text-small text-muted">Last updated: June 2026</p>
 
         <div className="mt-10 space-y-8 text-muted">
           <p>

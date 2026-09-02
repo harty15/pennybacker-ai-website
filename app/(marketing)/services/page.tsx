@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -9,11 +10,12 @@ import { Reveal } from "@/components/ui/reveal";
 import { PageHero } from "@/components/ui/page-hero";
 import { CtaBanner } from "@/components/sections/cta-banner";
 
-export const metadata: Metadata = {
-  title: "Services",
+export const metadata: Metadata = pageMetadata({
+  title: "AI Consulting Services: Roadmap, Build, Run",
   description:
-    "Three services, one firm: Roadmap (AI assessment & planning), Build (production agentic systems), Run (managed AI operations).",
-};
+    "Three services for operators: Roadmap (AI readiness assessment and plan), Build (production agents, MCP integrations, document intelligence), and Run (managed AI operations).",
+  path: "/services/",
+});
 
 const buildMini = [
   { heading: "Custom agents & orchestration", body: "Single-task automations to multi-agent systems with guardrails and human checkpoints." },

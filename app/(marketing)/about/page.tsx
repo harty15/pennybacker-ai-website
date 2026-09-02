@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/ui/reveal";
@@ -8,11 +9,12 @@ import { Founders } from "@/components/sections/founders";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { values } from "@/content/founders";
 
-export const metadata: Metadata = {
-  title: "About",
+export const metadata: Metadata = pageMetadata({
+  title: "About: Founder-led Applied AI Firm in Austin, Texas",
   description:
-    "Founder-led applied-AI firm in Austin, Texas. Engineers who build production AI inside real operations — and ship it for yours.",
-};
+    "Pennybacker AI is a founder-led applied-AI firm in Austin, Texas — engineers who build production AI inside real operations, named for the Pennybacker Bridge.",
+  path: "/about/",
+});
 
 export default function AboutPage() {
   return (

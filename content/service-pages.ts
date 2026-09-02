@@ -24,7 +24,7 @@ export const roadmap = {
   ],
   pricing: {
     heading: "What it costs",
-    body: "Fixed-fee, scoped to operation size — quoted on the intro call. [CONFIRM-PRICING]. If we later build the roadmap, a portion of the fee credits toward the build.",
+    body: "Fixed-fee, scoped to operation size — quoted on the intro call. If we later build the roadmap, a portion of the fee credits toward the build.",
   },
   closingStat: "The team writing your roadmap is the team that ships it.",
   cta: { heading: "Get a plan you can actually build." },
@@ -72,7 +72,7 @@ export const run = {
   deliverables: ["Monthly operations report", "Cost dashboard", "Upgrade log", "Governance pack", "Workflow release notes"],
   pricing: {
     heading: "How it's priced",
-    body: "Monthly retainer, sized to system count and cadence — quoted on the intro call. [CONFIRM-PRICING]. Cancel anytime; you own everything we built.",
+    body: "Monthly retainer, sized to system count and cadence — quoted on the intro call. Cancel anytime; you own everything we built.",
   },
   cta: { heading: "Keep your AI getting better.", body: "If you have systems in production — ours or anyone's — we can operate them." },
 } as const;

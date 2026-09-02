@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { CONTACT_EMAIL, WEB3FORMS_ACCESS_KEY } from "@/lib/site";
+import { track } from "@/lib/analytics";
 
 const interests = [
   { id: "roadmap", label: "Roadmap", desc: "Assess & plan" },
@@ -30,6 +31,7 @@ export function ContactForm() {
       window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
         `Intro call — ${interest}`,
       )}&body=${encodeURIComponent(body)}`;
+      track("Contact form submitted", { interest, via: "mailto" });
       setStatus("success");
       return;
     }
@@ -51,6 +53,7 @@ export function ContactForm() {
       });
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error("bad status");
+      track("Contact form submitted", { interest });
       setStatus("success");
     } catch {
       setStatus("error");

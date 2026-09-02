@@ -26,7 +26,8 @@ export function Button({
   className?: string;
   children: React.ReactNode;
 }) {
-  const cls = cn(base, variants[variant], className);
+  // Any CTA into /contact is tracked as the "Book intro call" goal (Plausible tagged events).
+  const cls = cn(base, variants[variant], href === "/contact" && "plausible-event-name=Book+intro+call", className);
   if (external) {
     return (
       <a href={href} className={cls} target="_blank" rel="noopener noreferrer">

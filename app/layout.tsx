@@ -3,7 +3,10 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ModeScript } from "@/components/layout/mode-script";
-import { SITE_URL, SITE_NAME, CONTACT_EMAIL } from "@/lib/site";
+import { Analytics } from "@/components/layout/analytics";
+import { JsonLd } from "@/components/seo/json-ld";
+import { organizationSchema, websiteSchema } from "@/lib/schema";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const spaceGrotesk = Space_Grotesk({
@@ -22,25 +25,14 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Pennybacker AI — Agentic systems for operators",
+    default: "Pennybacker AI — Applied AI consulting for operators | Austin, TX",
     template: "%s — Pennybacker AI",
   },
-  description:
-    "Pennybacker AI builds production AI systems for operators in energy, industry, and finance — from first roadmap to deployed software your team actually uses.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
   openGraph: { type: "website", siteName: SITE_NAME, locale: "en_US" },
   twitter: { card: "summary_large_image" },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: SITE_NAME,
-  description: "Applied-AI consultancy building production agentic systems for operators.",
-  url: SITE_URL,
-  email: CONTACT_EMAIL,
-  areaServed: "US",
-  address: { "@type": "PostalAddress", addressLocality: "Austin", addressRegion: "TX", addressCountry: "US" },
-  founder: { "@type": "Person", name: "Ryan Harty" },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -52,7 +44,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <head>
         <ModeScript />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        <Analytics />
       </head>
       <body className="min-h-full">
         <Providers>{children}</Providers>

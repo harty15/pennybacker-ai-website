@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -9,11 +10,12 @@ import { MethodPhases } from "@/components/sections/method-phases";
 import { TechStack } from "@/components/sections/tech-stack";
 import { CtaBanner } from "@/components/sections/cta-banner";
 
-export const metadata: Metadata = {
-  title: "Method",
+export const metadata: Metadata = pageMetadata({
+  title: "Our Method for Shipping Production AI",
   description:
-    "Survey, Span, Sustain — our method takes AI from operational understanding to production systems to continuous improvement. One firm, the full lifecycle.",
-};
+    "Survey, Span, Sustain: how Pennybacker AI takes operators from operational understanding to production AI systems to continuous improvement — one senior team, no handoff.",
+  path: "/method/",
+});
 
 const outcomes = [
   { value: "2–6 Weeks", label: "Survey to roadmap." },

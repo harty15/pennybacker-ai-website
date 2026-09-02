@@ -42,10 +42,20 @@ jobs:
       - name: Upload to S3
         run: |
           # Long-cache the fingerprinted assets, then sync the rest (HTML etc.)
+          # The generated icon / Open Graph images (next/og) have no file
+          # extension, so they are uploaded separately with an explicit PNG
+          # content type — S3 would otherwise serve them as binary/octet-stream.
+          IMG_PATTERNS=(--include "icon" --include "apple-icon" --include "opengraph-image" --include "*/opengraph-image-*" --include "twitter-image" --include "*/twitter-image-*")
           aws s3 sync out/ "s3://${{ vars.AWS_S3_BUCKET }}/" \
             --delete \
             --exclude "_next/static/*" \
+            --exclude "icon" --exclude "apple-icon" --exclude "opengraph-image" --exclude "*/opengraph-image-*" \
+            --exclude "twitter-image" --exclude "*/twitter-image-*" \
             --cache-control "public, max-age=0, must-revalidate"
+          aws s3 cp out/ "s3://${{ vars.AWS_S3_BUCKET }}/" --recursive \
+            --exclude "*" "${IMG_PATTERNS[@]}" \
+            --content-type "image/png" \
+            --cache-control "public, max-age=86400"
           aws s3 sync out/_next/static/ "s3://${{ vars.AWS_S3_BUCKET }}/_next/static/" \
             --cache-control "public, max-age=31536000, immutable"
 
@@ -54,3 +64,28 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id "${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}" \
             --paths "/*"
+
+      - name: Submit URLs to IndexNow
+        # Bing / Yandex / Naver / Seznam share the IndexNow index; Google does not
+        # (it reads the sitemap from Search Console). Failures here never fail the deploy.
+        continue-on-error: true
+        run: |
+          KEY=$(grep -oE 'INDEXNOW_KEY = "[a-f0-9]{32}"' lib/site.ts | grep -oE '[a-f0-9]{32}')
+          python3 - "$KEY" <<'PY'
+          import json, re, sys, urllib.request, urllib.error
+          key = sys.argv[1]
+          urls = re.findall(r"<loc>(.*?)</loc>", open("out/sitemap.xml").read())
+          body = json.dumps({
+              "host": "www.pennybacker-ai.com",
+              "key": key,
+              "keyLocation": f"https://www.pennybacker-ai.com/{key}.txt",
+              "urlList": urls,
+          }).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                       headers={"Content-Type": "application/json; charset=utf-8"})
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  print(f"IndexNow accepted {len(urls)} URLs (HTTP {r.status})")
+          except urllib.error.HTTPError as e:
+              print("IndexNow error:", e.code, e.read()[:200])
+          PY

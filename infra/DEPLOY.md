@@ -131,3 +131,31 @@ moved to **Route 53** while the domain stays registered at Squarespace.
   `https://www.pennybacker-ai.com`).
 - To change records later: edit `infra/route53-records.json` and
   `aws route53 change-resource-record-sets --hosted-zone-id Z027934625TBBC6MRWKEF --change-batch file://infra/route53-records.json`.
+
+## Canonical URLs (SEO)
+
+The CloudFront viewer-request function (`RewriteFunction` in `cloudformation.yaml`)
+enforces **one URL per page** so search engines don't split signals across variants:
+
+| Request                                  | Response                                   |
+| ---------------------------------------- | ------------------------------------------ |
+| `https://pennybacker-ai.com/anything`    | `301 → https://www.pennybacker-ai.com/…`   |
+| `https://xxxx.cloudfront.net/anything`   | `301 → https://www.pennybacker-ai.com/…`   |
+| `/services/build` (no trailing slash)    | `301 → /services/build/`                   |
+| `/services/build/index.html`             | `301 → /services/build/`                   |
+| `/services/build/`                       | served from the S3 key `services/build/index.html` |
+| anything with a file extension           | passed through unchanged                   |
+
+Every page also emits `<link rel="canonical">` in the www + trailing-slash form
+(`lib/seo.ts`), and the sitemap lists the same form. Change the function →
+redeploy the stack (`aws cloudformation deploy …` as in step 1/4d); `AutoPublish`
+pushes the new code live within a minute or two.
+
+## Generated images without extensions
+
+`app/icon.tsx`, `app/apple-icon.tsx` and the `opengraph-image.tsx` routes are
+rendered at build time by `next/og` into **extension-less** files
+(`out/icon`, `out/opengraph-image`, `out/work/<slug>/opengraph-image-<hash>`).
+The deploy workflow uploads those with `--content-type image/png`; if you add a
+new generated image route, add its name to the include/exclude lists in
+`.github/workflows/deploy.yml`.

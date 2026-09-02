@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Hero } from "@/components/sections/hero";
 import { StatBand } from "@/components/sections/stat-band";
 import { ServicesGrid } from "@/components/sections/services-grid";
@@ -6,6 +8,13 @@ import { FailCards } from "@/components/sections/fail-cards";
 import { MethodSteps } from "@/components/sections/method-steps";
 import { ProofGrid } from "@/components/sections/proof-grid";
 import { CtaBanner } from "@/components/sections/cta-banner";
+
+export const metadata: Metadata = pageMetadata({
+  absoluteTitle: "Pennybacker AI — Applied AI consulting for operators | Austin, TX",
+  description:
+    "Applied-AI firm in Austin, Texas. We build production AI systems for operators in energy, industry, and finance — AI roadmaps, custom agents, MCP integrations, and document intelligence.",
+  path: "/",
+});
 
 export default function HomePage() {
   return (

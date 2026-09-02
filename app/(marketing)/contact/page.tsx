@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { ContactInfo } from "@/components/sections/contact-info";
 import { ContactForm } from "@/components/sections/contact-form";
 
-export const metadata: Metadata = {
-  title: "Contact",
+export const metadata: Metadata = pageMetadata({
+  title: "Book a 30-Minute Intro Call",
   description:
-    "Book a 30-minute intro call. Tell us what you're trying to build — or what keeps not getting built.",
-};
+    "Book a 30-minute intro call with a Pennybacker AI engineer. Tell us what you're trying to build — or what keeps not getting built. Useful even if we never work together.",
+  path: "/contact/",
+});
 
 export default function ContactPage() {
   return (

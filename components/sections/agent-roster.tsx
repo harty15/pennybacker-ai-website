@@ -1,6 +1,6 @@
 const roster = [
   { name: "Ryan Harty", role: "Principal engineer", status: "active" },
-  { name: "Max [MAX-LASTNAME]", role: "[MAX-TITLE]", status: "active" },
+  { name: "Max Holter", role: "Lead data engineer", status: "active" },
   { name: "Build Agent", role: "Codegen & integration", status: "running" },
   { name: "Eval Agent", role: "Tests & regression", status: "running" },
 ];
