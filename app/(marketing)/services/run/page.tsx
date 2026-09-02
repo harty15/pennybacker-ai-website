@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Chip } from "@/components/ui/chip";
@@ -7,17 +8,31 @@ import { PageHero } from "@/components/ui/page-hero";
 import { OperatingLoop } from "@/components/sections/operating-loop";
 import { CrossSell } from "@/components/sections/cross-sell";
 import { CtaBanner } from "@/components/sections/cta-banner";
+import { Faq } from "@/components/sections/faq";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
+import { runFaqs } from "@/content/faqs";
 import { run } from "@/content/service-pages";
 
-export const metadata: Metadata = {
-  title: "Run",
+export const metadata: Metadata = pageMetadata({
+  title: "Managed AI Operations & Model Upgrades",
   description:
-    "Managed AI operations: usage and cost telemetry, model upgrades, governance, and a steady stream of new workflows — your AI systems, operated.",
-};
+    "Managed AI operations: usage and cost telemetry, model and capability upgrades, governance and access control, and new workflows shipped monthly. Cancel anytime; you own the systems.",
+  path: "/services/run/",
+});
 
 export default function RunPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Services", path: "/services/" },
+            { name: "Run", path: "/services/run/" },
+          ]),
+          serviceSchema({ name: "Run — managed AI operations", description: run.subhead, path: "/services/run/" }),
+        ]}
+      />
       <PageHero
         eyebrow={run.eyebrow}
         title={run.title}
@@ -90,6 +105,7 @@ export default function RunPage() {
         </Container>
       </section>
 
+      <Faq items={runFaqs} />
       <CrossSell current="run" />
       <CtaBanner heading={run.cta.heading} body={run.cta.body} />
     </>

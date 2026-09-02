@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { CONTACT_EMAIL } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Privacy",
-  description: "Privacy policy for Pennybacker AI.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Privacy Policy",
+  description:
+    "Privacy policy for Pennybacker AI (Harty Consulting LLC): what the contact form collects, cookieless analytics, and how data is handled.",
+  path: "/privacy/",
+});
 
 export default function PrivacyPage() {
   return (
@@ -14,7 +17,7 @@ export default function PrivacyPage() {
       <Container className="max-w-3xl">
         <Eyebrow>Legal</Eyebrow>
         <h1 className="mt-4 text-h1">Privacy Policy</h1>
-        <p className="mt-3 text-small text-muted">Last updated: June 2026 · [LEGAL-REVIEW — not legal advice as drafted]</p>
+        <p className="mt-3 text-small text-muted">Last updated: June 2026</p>
 
         <div className="mt-10 space-y-8 text-muted">
           <p>

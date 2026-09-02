@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
@@ -6,11 +7,12 @@ import { PageHero } from "@/components/ui/page-hero";
 import { WorkExplorer } from "@/components/sections/work-explorer";
 import { CtaBanner } from "@/components/sections/cta-banner";
 
-export const metadata: Metadata = {
-  title: "Work",
+export const metadata: Metadata = pageMetadata({
+  title: "Case Studies: Production AI for Energy, Capital & Tech",
   description:
-    "Production AI systems we've shipped — document intelligence, enterprise MCP integrations, agentic workflow automation, and the systems that run our own firm.",
-};
+    "Production AI systems Pennybacker AI has shipped: engineering document intelligence, MCP servers over 15+ enterprise systems, multi-agent cost validation, litigation RAG, and our own firm OS.",
+  path: "/work/",
+});
 
 export default function WorkPage() {
   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/ui/reveal";
@@ -7,17 +8,31 @@ import { LabeledCards } from "@/components/sections/labeled-cards";
 import { TimelineSteps } from "@/components/sections/timeline-steps";
 import { CrossSell } from "@/components/sections/cross-sell";
 import { CtaBanner } from "@/components/sections/cta-banner";
+import { Faq } from "@/components/sections/faq";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
+import { roadmapFaqs } from "@/content/faqs";
 import { roadmap } from "@/content/service-pages";
 
-export const metadata: Metadata = {
-  title: "Roadmap",
+export const metadata: Metadata = pageMetadata({
+  title: "AI Readiness Assessment & Roadmap for Operators",
   description:
-    "An AI readiness survey for operators: workflow mapping, systems audit, opportunity scoring, and a roadmap with honest ROI math — in 2–6 weeks.",
-};
+    "An AI readiness assessment for your operation: workflow mapping, systems and data audit, scored opportunities with ROI math, and a build-ready pilot plan in two to six weeks.",
+  path: "/services/roadmap/",
+});
 
 export default function RoadmapPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Services", path: "/services/" },
+            { name: "Roadmap", path: "/services/roadmap/" },
+          ]),
+          serviceSchema({ name: "Roadmap — AI readiness assessment and plan", description: roadmap.subhead, path: "/services/roadmap/" }),
+        ]}
+      />
       <PageHero
         eyebrow={roadmap.eyebrow}
         title={roadmap.title}
@@ -75,6 +90,7 @@ export default function RoadmapPage() {
         </Container>
       </section>
 
+      <Faq items={roadmapFaqs} />
       <CrossSell current="roadmap" />
       <CtaBanner heading={roadmap.cta.heading} />
     </>

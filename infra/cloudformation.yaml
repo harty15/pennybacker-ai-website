@@ -89,7 +89,7 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
 
-  # ── URL rewrite for the static export (trailingSlash folders → index.html) ─
+  # ── Canonical redirects + index.html rewrite for the static export ─────────
   RewriteFunction:
     Type: AWS::CloudFront::Function
     Properties:
@@ -98,14 +98,56 @@ Resources:
       FunctionConfig:
         Runtime: cloudfront-js-2.0
         Comment: Map directory-style URIs to their index.html
-      FunctionCode: |
+      FunctionCode: !Sub |
+        // Canonical host + URL form for the static export (one URL per page for SEO):
+        //   apex / *.cloudfront.net  -> 301 https://www.<domain>/...
+        //   /path                    -> 301 /path/            (Next trailingSlash: true)
+        //   /path/index.html         -> 301 /path/
+        //   /path/                   -> /path/index.html      (internal rewrite to the S3 key)
+        // Files with an extension (/robots.txt, /_next/...) pass through untouched.
+        var CANONICAL_HOST = 'www.${DomainName}';
+        var ENFORCE_HOST = CANONICAL_HOST !== 'www.';
+        function redirect(location) {
+          return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+              location: { value: location },
+              'cache-control': { value: 'public, max-age=3600' }
+            }
+          };
+        }
+        function queryString(qs) {
+          var parts = [];
+          for (var key in qs) {
+            var entry = qs[key];
+            if (entry.multiValue) {
+              for (var i = 0; i < entry.multiValue.length; i++) {
+                parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(entry.multiValue[i].value));
+              }
+            } else {
+              parts.push(encodeURIComponent(key) + (entry.value === '' ? '' : '=' + encodeURIComponent(entry.value)));
+            }
+          }
+          return parts.length ? '?' + parts.join('&') : '';
+        }
         function handler(event) {
           var request = event.request;
+          var host = request.headers.host ? request.headers.host.value : CANONICAL_HOST;
           var uri = request.uri;
+          var last = uri.split('/').pop();
+          var canonicalUri = uri;
+          if (last === 'index.html') {
+            canonicalUri = uri.slice(0, uri.length - 'index.html'.length);
+          } else if (last !== '' && !last.includes('.')) {
+            canonicalUri = uri + '/';
+          }
+          if ((ENFORCE_HOST && host !== CANONICAL_HOST) || canonicalUri !== uri) {
+            var target = 'https://' + (ENFORCE_HOST ? CANONICAL_HOST : host) + canonicalUri + queryString(request.querystring);
+            return redirect(target);
+          }
           if (uri.endsWith('/')) {
             request.uri += 'index.html';
-          } else if (!uri.split('/').pop().includes('.')) {
-            request.uri += '/index.html';
           }
           return request;
         }

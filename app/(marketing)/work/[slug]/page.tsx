@@ -9,6 +9,9 @@ import { Reveal } from "@/components/ui/reveal";
 import { WorkCard } from "@/components/sections/work-card";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { work, TAG_LABELS } from "@/content/work";
+import { pageMetadata, excerpt } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbSchema } from "@/lib/schema";
 
 export function generateStaticParams() {
   return work.map((w) => ({ slug: w.slug }));
@@ -18,7 +21,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const brief = work.find((w) => w.slug === slug);
   if (!brief) return { title: "Work" };
-  return { title: brief.title, description: brief.highlights[0] };
+  return pageMetadata({
+    title: brief.title,
+    description: excerpt(brief.situation),
+    path: `/work/${slug}/`,
+  });
 }
 
 function CheckList({ items }: { items: string[] }) {
@@ -47,6 +54,12 @@ export default async function WorkDetail({ params }: { params: Promise<{ slug: s
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Work", path: "/work/" },
+          { name: brief.title, path: `/work/${brief.slug}/` },
+        ])}
+      />
       <section className="relative z-10 border-b border-line pb-12 pt-28 md:pt-36">
         <Container>
           <Link href="/work" className="text-small text-muted transition-colors hover:text-fg">

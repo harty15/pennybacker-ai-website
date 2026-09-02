@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -10,20 +11,34 @@ import { LabeledCards } from "@/components/sections/labeled-cards";
 import { WorkCard } from "@/components/sections/work-card";
 import { CrossSell } from "@/components/sections/cross-sell";
 import { CtaBanner } from "@/components/sections/cta-banner";
+import { Faq } from "@/components/sections/faq";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
+import { buildFaqs } from "@/content/faqs";
 import { build } from "@/content/service-pages";
 import { work } from "@/content/work";
 
-export const metadata: Metadata = {
-  title: "Build",
+export const metadata: Metadata = pageMetadata({
+  title: "AI Development: Agents, MCP & Document Intelligence",
   description:
-    "Production agentic systems: custom agents, MCP integrations, document intelligence, and data pipelines — designed and hardened inside the systems you already run.",
-};
+    "Production agentic systems for operators: custom agents, MCP servers over ERP and document systems, document classification and RAG, evals and observability — hardened in your environment.",
+  path: "/services/build/",
+});
 
 const buildWork = work.filter((w) => w.services.includes("build")).slice(0, 3);
 
 export default function BuildPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Services", path: "/services/" },
+            { name: "Build", path: "/services/build/" },
+          ]),
+          serviceSchema({ name: "Build — production agentic systems", description: build.subhead, path: "/services/build/" }),
+        ]}
+      />
       <PageHero
         eyebrow={build.eyebrow}
         title={build.title}
@@ -90,6 +105,7 @@ export default function BuildPage() {
         </Container>
       </section>
 
+      <Faq items={buildFaqs} />
       <CrossSell current="build" />
       <CtaBanner heading={build.cta.heading} body={build.cta.body} />
     </>

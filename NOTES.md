@@ -40,6 +40,26 @@ content/             typed copy data (services, fail-modes, method)
 lib/                 cn, theme
 ```
 
+## SEO plumbing (Sept 2026)
+
+- `lib/seo.ts` — `pageMetadata({ title, description, path })` gives every page a canonical
+  URL (www + trailing slash) and matching Open Graph fields. Use it for every new page.
+- `lib/schema.ts` + `components/seo/json-ld.tsx` — Organization/WebSite (root layout),
+  BreadcrumbList + Service (service pages), FAQPage (`components/sections/faq.tsx`,
+  copy in `content/faqs.ts`), BreadcrumbList on work briefs.
+- `app/opengraph-image.tsx`, `app/(marketing)/work/[slug]/opengraph-image.tsx`,
+  `app/icon.tsx`, `app/apple-icon.tsx` — generated at build with `next/og`; brand
+  frame + vendored fonts live in `lib/og.tsx` / `assets/fonts/`.
+- `app/sitemap.ts` (lastmod from `CONTENT_UPDATED` in `lib/site.ts` — bump it when copy
+  changes), `app/robots.ts`, `app/llms.txt/route.ts`.
+- `components/layout/analytics.tsx` — Plausible (cookieless), production builds only.
+  CTA buttons into `/contact` carry the `Book intro call` goal class; the contact form
+  fires `Contact form submitted`. Create both goals in the Plausible dashboard.
+- `<Reveal eager>` — first-viewport blocks (hero, page hero) animate in CSS from first
+  paint instead of shipping at `opacity:0` until hydration (LCP).
+- Redirect rules (apex → www, trailing slash, index.html) live in the CloudFront
+  function in `infra/cloudformation.yaml` — see `infra/DEPLOY.md`.
+
 ## Placeholders (intentional — leave until real assets land)
 
 - **Logo/emblem:** `components/layout/brandmark.tsx` has a stand-in arch glyph — swap for the real Pennybacker mark (SVG in `/public`).
