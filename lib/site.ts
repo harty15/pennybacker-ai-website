@@ -41,7 +41,9 @@ export const WEB3FORMS_ACCESS_KEY = "fe2c0118-fcb8-4e9d-8edb-bc78cff4610c";
  * Plausible dashboard: "Book intro call" (tagged CTA clicks) and
  * "Contact form submitted" (custom event fired on successful send).
  */
-export const PLAUSIBLE_DOMAIN = "www.pennybacker-ai.com";
+// Must match the site name exactly as entered in the Plausible dashboard
+// (Ryan registered the apex, not www; Plausible attributes by this string).
+export const PLAUSIBLE_DOMAIN = "pennybacker-ai.com";
 
 /**
  * IndexNow key (https://www.indexnow.org). The deploy workflow submits every
