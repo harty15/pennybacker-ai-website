@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
 
 const nextConfig: NextConfig = {
   // Fully static site (S3 + CloudFront): emit a self-contained `out/` bundle.
@@ -10,4 +11,13 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
 };
 
-export default nextConfig;
+// Insights posts are MDX files in content/posts/, imported by app/(marketing)/insights.
+// Plugins are named as strings so they work under Turbopack (see the Next MDX guide).
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: ["remark-frontmatter", "remark-mdx-frontmatter", "remark-gfm"],
+    rehypePlugins: [],
+  },
+});
+
+export default withMDX(nextConfig);

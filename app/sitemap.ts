@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL, CONTENT_UPDATED } from "@/lib/site";
 import { work } from "@/content/work";
+import { getAllPosts } from "@/lib/posts";
 
 // Emit a static sitemap.xml at build time (required for output: "export").
 export const dynamic = "force-static";
@@ -23,8 +24,9 @@ const staticRoutes: { path: string; priority: number; changeFrequency: Freq }[] 
   { path: "/terms/", priority: 0.2, changeFrequency: "yearly" },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date(CONTENT_UPDATED);
+  const posts = await getAllPosts();
   const pages = staticRoutes.map((r) => ({ url: `${SITE_URL}${r.path}`, lastModified, ...r }));
   const briefs = work.map((w) => ({
     url: `${SITE_URL}/work/${w.slug}/`,
@@ -32,7 +34,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
-  return [...pages, ...briefs].map(({ url, lastModified, changeFrequency, priority }) => ({
+  const insights = posts.length
+    ? [
+        {
+          url: `${SITE_URL}/insights/`,
+          lastModified: new Date(posts[0].updated ?? posts[0].date),
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        },
+        ...posts.map((p) => ({
+          url: `${SITE_URL}/insights/${p.slug}/`,
+          lastModified: new Date(p.updated ?? p.date),
+          changeFrequency: "monthly" as const,
+          priority: 0.7,
+        })),
+      ]
+    : [];
+  return [...pages, ...insights, ...briefs].map(({ url, lastModified, changeFrequency, priority }) => ({
     url,
     lastModified,
     changeFrequency,

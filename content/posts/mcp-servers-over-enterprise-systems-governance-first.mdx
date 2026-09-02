@@ -1,0 +1,115 @@
+---
+title: "MCP servers over enterprise systems: a governance-first pattern"
+description: "How to make an ERP, a schedule, or a document system conversational without handing the model the keys: one server per system, read-first tools, identity passed through, every call logged, evals before demos."
+date: "2026-09-03"
+author: ryan
+tags: [mcp, agents, governance]
+pillar: mcp
+draft: true
+---
+
+The request that starts most enterprise AI projects is simple: "I want to ask a question and get an answer, without logging into five systems." On an industrial project the five systems are real. The ERP has the commitments, the scheduling tool has the dates, the cost platform has the forecast, document control has the drawings, and the answer to "are we going to be late on the vendor packages for area 3" lives in all of them at once.
+
+The Model Context Protocol is the plumbing that makes this tractable. It is an open standard for connecting AI applications to tools and data, and since late 2025 it has been stewarded by the Linux Foundation's Agentic AI Foundation rather than a single vendor. It has become the default way to expose a system to an agent. What it does not do is decide how much of your operation to expose, under whose identity, with what audit trail. Those are the decisions that separate a governed integration from a liability, and they are the subject of this post.
+
+We have shipped more than seven production MCP servers over fifteen-plus enterprise platforms for operators in regulated environments. The pattern below is what survived.
+
+## Why "just connect the model to the database" fails
+
+The fastest demo is a single tool that runs SQL against a warehouse. It answers any question, impressively, for the two hours until someone asks it about payroll. Then the demo becomes a security review, and the review is correct: the model was given access the user did not have, the query it wrote was unauditable, and nobody can say afterward exactly what data went into the answer.
+
+Every rule in the pattern exists because of a version of that story.
+
+## The pattern
+
+### One server per system of record
+
+An MCP server should wrap exactly one system: the ERP, the scheduling tool, the cost platform, the document management system. Not "the data," not "finance."
+
+The reasons are practical. Each system has an owner who can approve what is exposed. Each has its own authentication and permission model that the server must respect. Each changes on its own release cycle, and a schema change in scheduling should not take down cost queries. And when something goes wrong, "the scheduling server returned bad data" is a diagnosable statement in a way that "the enterprise server returned bad data" is not.
+
+| System | Typical read tools | Writes (gated) | Owner |
+| --- | --- | --- | --- |
+| ERP / finance | commitments by vendor, invoice status, PO lookup | none in phase one | Finance systems lead |
+| Scheduling | activity status, float, milestone dates, lookahead | none | Project controls |
+| Cost platform | forecast by WBS, actuals vs. baseline, change orders | flag an exception for review | Project controls |
+| Document control | search by tag or discipline, revision history, transmittal status | none | Document control |
+
+The conversational layer that spans all of them lives in the client, not in a mega-server. The model composes answers across tools; each tool stays inside its own system's rules.
+
+### Read first, write through existing workflows
+
+Phase one is read-only. Not because writes are impossible, but because a read-only server has a bounded blast radius, and the trust it earns is what pays for phase two.
+
+When writes arrive, they should go through the workflow the operation already trusts. A tool that "flags an exception for review" and creates a task in the existing queue is a write. A tool that "updates the forecast" is a different category, and in a project controls environment it should not exist until a human approval step sits in front of it. Agents retrying writes is the failure you cannot take back.
+
+### Identity passes through
+
+The server acts as the user, not as a service account with god rights. The user's token, or a delegated credential scoped to the user, goes with every call, and the system of record does the permission check the way it does for a human.
+
+This is the single most important rule in the pattern, and the most commonly skipped. A service account is easier: one credential, no token plumbing. It also means the model can see everything, and the only thing standing between a user and data they should not have is a prompt. Prompts are not access control. When identity passes through, the permission problem is solved before anyone has to think about it, because a user cannot get the model to return a record the user could not open themselves.
+
+The cost is real: token exchange, delegated auth against systems that were not designed for it, and sometimes a vendor conversation. Pay it.
+
+### Scope tool inputs tightly
+
+Tools take structured arguments with narrow types: an enumerated discipline, a vendor identifier, a date range, a WBS code that matches a pattern. They do not take free text that becomes a query.
+
+```json
+{
+  "name": "cost.forecast_by_wbs",
+  "description": "Current forecast, budget and actuals for one WBS element.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "wbs": { "type": "string", "pattern": "^[0-9]{2}-[0-9]{3}-[0-9]{3}$" },
+      "as_of": { "type": "string", "format": "date" }
+    },
+    "required": ["wbs"]
+  }
+}
+```
+
+A tight schema does three jobs. It makes injection through the model's arguments impossible in practice. It makes the audit log readable, because every call is a small, typed record. And it keeps responses small, because the server decides what a "forecast" answer contains instead of the model asking for the table.
+
+### Log every call
+
+Who called, which tool, with what arguments, what came back (at least a size and a hash), how long it took, and which model was on the other end. This is the audit trail, and it should exist from the first day the server is reachable by anyone other than the engineer who wrote it.
+
+The log is also your product analytics. Which tools get called, by whom, how often, and with what arguments tells you what the next tool should be far more reliably than a requirements workshop.
+
+### Answer with citations
+
+Every answer that came from a system carries the record identifiers it came from: the PO number, the activity ID, the document number and revision. Operators verify; a plain-English answer with no way to check it is a rumor with good grammar. Citations also make the eval set possible, because a cited answer can be graded.
+
+### Evals before demos
+
+Before the first demo to anyone who can cancel the project, build a set of twenty to fifty real questions per system with known-good answers, and run it on every change: to the server, to the prompt, to the model. When a model is deprecated and its replacement answers 6 of 40 questions differently, you want to learn that from the eval run, not from an operator.
+
+## What breaks
+
+The pattern holds up. These are the things that still bite.
+
+**Schema drift.** The scheduling tool renames a field in a point release. Read tools should be built on views or a translation layer the server owns, so the change is absorbed in one place.
+
+**Cross-system joins.** "Vendor" in the ERP and "vendor" in the cost platform are not the same key. Either maintain a mapping the server owns, or make the model ask the user to disambiguate. Do not let the model guess a join.
+
+**Responses that are too big.** A tool that returns a whole table costs tokens, slows the answer, and tempts the model to summarize badly. Paginate and aggregate on the server; return what a competent analyst would put in an email.
+
+**Latency budgets.** Four sequential tool calls at two seconds each is an eight-second answer. Parallelize independent calls in the client, and cache reference data that changes daily rather than per query.
+
+**Model deprecations.** They arrive on the vendor's schedule, not yours. The eval set and a one-line model switch in configuration are the difference between a morning's work and an outage.
+
+## Anti-patterns worth naming
+
+- **The mega-server.** One MCP server for "all our data." Unowned, unversionable, and one bad deploy from taking everything down.
+- **The SQL tool.** "Run this query" is not a tool, it is a shell.
+- **Cached identities.** A server that authenticates once and reuses the credential for every user has quietly become a service account.
+- **Retries on writes.** An agent that retries a failed write has no idea whether the first attempt succeeded.
+- **Skipping the log because it is phase one.** Phase one is when the habits form.
+
+## Where to start
+
+Pick the system where a single read tool would end the most logins per week. On most projects that is document control or scheduling, not finance. Build one server with three read tools, identity passed through, logging on, and an eval set of twenty questions from the people who will use it. Get it in front of them within the first few weeks. The second system is faster, and by the third the pattern is the platform.
+
+If you want to see what this looks like on a real estate of systems, [the conversational enterprise data case study](/work/conversational-enterprise-data/) describes the shape of it at capability level, and the [Build](/services/build/) service is where we do it with you.

@@ -1,0 +1,96 @@
+---
+title: "Why AI pilots die in the gap between the deck and production"
+description: "Most AI initiatives in operations do not fail on model quality. They fail in the handoff between strategy and engineering. What the gap looks like from inside a real operation, and the three things that close it."
+date: "2026-09-02"
+author: ryan
+tags: [ai-roadmap, operators]
+pillar: roadmaps
+draft: true
+---
+
+Every operator we talk to has the same artifact somewhere on a shared drive: an AI strategy deck from last year. It is a good deck. It names the right workflows. It has a slide with a dollar figure on it. And somewhere between that deck and today, a pilot was built that impressed a room, and then nothing happened.
+
+The usual diagnosis is that the model was not good enough, or the data was not ready, or the team lost interest. In our experience those are symptoms. The disease is a gap: the strategy was written by people who would never have to ship it, and the build was done by people who never saw the operation. Context fell into the space between them, and the pilot was built on what was left.
+
+This post is about what that gap looks like up close, why it is a handoff problem rather than a technology problem, and the three changes that reliably close it.
+
+## The three ways it goes wrong
+
+We keep seeing the same three failure modes. They look different from the outside, but they share a cause.
+
+**The deck with no engineers behind it.** A strategy firm interviews the leadership team, benchmarks the industry, and produces a roadmap. The roadmap says "automate document intake" and "deploy an operations copilot." It does not say which document control system the intake has to write to, what the revision workflow looks like when a vendor resubmits a drawing, or who is allowed to see cost data. Those details were never collected, because the people collecting information were not the people who would need it. The roadmap is handed to whoever builds next, and the first month of the build is spent rediscovering what the interviews should have captured.
+
+**The dev shop with no operating context.** The opposite failure. A capable engineering team gets a brief and builds exactly what it says. The system works. It automates the step that was easy to describe instead of the step that was expensive. On one project we saw a beautifully built classification model for incoming invoices when the actual bottleneck was the three-way match against purchase orders that lived in a different system nobody had mentioned. Builders who have never run an operation automate the wrong thing well.
+
+**The demo that cannot survive contact.** A pilot is built on a clean sample: two hundred documents chosen because they were representative, a service account with read access to everything, a single user who knows what the system can do. Then it meets production: fourteen naming conventions, a permissions model that means half the answers must be withheld from half the users, scanned PDFs from 2011, and an operator who asks a question the sample never contained. The demo was real. The production environment was never in the room.
+
+## What actually falls into the gap
+
+It helps to be precise about what is lost between a strategy phase and a build, because it is not vague "alignment." It is specific, boring information that the build cannot proceed without.
+
+| Strategy artifact | What the build actually needs | What falls into the gap |
+| --- | --- | --- |
+| A process map of the workflow | The exceptions: who approves what, what happens when the input is wrong, which steps are skipped under deadline | The 20 percent of cases that take 80 percent of the time |
+| A systems inventory | Which fields in each system are trustworthy, which are free text, which are populated by a script nobody owns | Data quality at the field level, not the system level |
+| An ROI estimate | A baseline measurement of the current cost, and a definition of "done" everyone will sign | The number the pilot will be judged against |
+| A pilot scope | The permission model, the audit requirement, the rollout path from five users to fifty | The constraints that turn a demo into a system |
+| A named executive sponsor | The operator who will use the system on a Tuesday afternoon and the person who will maintain it in month four | Adoption and ownership |
+
+None of this is exotic. All of it is discoverable in the first two weeks of sitting with the people who do the work. The problem is that in the standard model, the people who sit with the operators are not the people who write the code, and the document that passes between them cannot carry this much detail.
+
+## Why "better requirements" does not fix it
+
+The instinctive fix is a thicker requirements document. It does not work, for two reasons.
+
+First, the detail that matters is only recognizable as important to someone who is about to build the thing. An interviewer who has never implemented a permission-aware retrieval system does not know to ask how access is scoped in the document management system. A builder would ask in the first ten minutes, because their design depends on the answer.
+
+Second, requirements decay. A six-month strategy engagement produces a document that describes the operation as it was in month one. By the time the build starts, the ERP has been upgraded, the project has entered a new phase, and two of the interviewees have changed roles. A build that starts from a stale document spends its first weeks re-surveying, badly.
+
+The only reliable carrier of operational context is a person who was there and is also writing the code.
+
+## The three changes that close the gap
+
+We have organized the whole firm around closing this gap, and the [method](/method/) reduces to three commitments.
+
+### 1. The people who map the work write the code
+
+No handoff between a strategy team and a delivery team. The engineer who sits with the operators in week one is the engineer who ships the system. This sounds like a staffing preference. It is actually a design decision: it means every question in the survey is asked by someone who knows what they will do with the answer, and every line of the system carries the context of the conversation it came from.
+
+It also changes what the [roadmap](/services/roadmap/) is for. A roadmap written by the engineers who would build it is grounded in what is actually buildable, and it can be short, because it does not need to explain the operation to a stranger.
+
+### 2. Build production-shaped from the first week
+
+A pilot should run against real data, under the real permission model, with real users, from as early as possible. Not because the first version will be good, but because the constraints that kill demos are only visible in contact with them.
+
+Concretely this means:
+
+- Connect to the actual system of record in week one, even if the first version reads a single table.
+- Use the user's identity, not a service account, so every answer is already scoped correctly and the permission problem is solved before anyone notices it is a problem.
+- Build the evaluation set from questions the operators actually asked, and run it every time the system changes.
+- Treat the audit trail as a feature of the first release, because in a regulated operation it is the difference between a tool and a liability.
+
+A pilot built this way is smaller and uglier than the demo. It is also already a system.
+
+### 3. Plan for the system to change
+
+Models are deprecated every few months. The operation changes. The first users find the second use case. A pilot that has no one assigned to keep it current is dead the day the build team leaves, no matter how good it was.
+
+The [Run](/services/run/) side of the firm exists because of this: telemetry on usage and cost, model upgrades as capabilities improve, governance that keeps up with the org chart, and new workflows shipped as the team finds new ground. It is unglamorous. It is also where most of the return on an AI system actually accrues, because the second and third workflows are much cheaper than the first.
+
+## Before you approve the next pilot
+
+A short list of questions worth asking before any AI pilot in your operation gets funded. If the answer to any of them is "we will figure that out later," the pilot is being built for the gap.
+
+1. Who will maintain this in month four, by name?
+2. What is the baseline we are measuring against, and who measured it?
+3. Which system of record does this read from, and which does it write to?
+4. Whose identity does the system act under, and who decides what it may see?
+5. What is the evaluation set, and who wrote the questions?
+6. What happens when it is wrong, and who is accountable?
+7. What is the path from five users to fifty, and what has to be true for that to happen?
+
+## What still breaks
+
+Closing the gap does not make AI in operations easy. It makes the failures honest. Even with one team from survey to sustain, you will hit data that is worse than anyone admitted, an integration that the vendor's documentation lied about, a model deprecation at the worst possible moment, and at least one user who will not use anything that did not exist when they were hired. The difference is that those problems arrive as engineering problems inside a system that already runs, rather than as reasons a deck never became one.
+
+If you have a pilot that stalled, or a roadmap that never turned into software, the useful first step is usually not another assessment. It is a conversation with someone who will have to build it. [That is what the intro call is for.](/contact/)

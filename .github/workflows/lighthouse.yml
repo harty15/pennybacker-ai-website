@@ -1,0 +1,41 @@
+name: Lighthouse
+
+# Performance / SEO budget on every pull request. Mobile emulation, throttled,
+# against the static export served locally. Thresholds live in lighthouserc.json:
+# SEO, accessibility and CLS regressions fail the check; performance and LCP warn.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Include drafts so a new Insights post is measured before it is published.
+      - run: INSIGHTS_INCLUDE_DRAFTS=1 npm run build
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.14.0
+          lhci autorun
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: lhci-report
+          retention-days: 14

@@ -97,7 +97,7 @@ export function ThemeStudio() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        aria-label="Open Color Studio"
+        aria-label="Theme — open Color Studio"
         className="flex items-center gap-2 rounded-full border border-line bg-surface/95 py-2 pl-2 pr-4 shadow-xl shadow-black/10 backdrop-blur-md transition-transform duration-200 ease-out-quart hover:-translate-y-0.5"
       >
         <span className="size-7 rounded-full bg-accent" aria-hidden />

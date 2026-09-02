@@ -1,0 +1,105 @@
+# Editorial queue for Insights. The drafting routine takes the first item with
+# status: queued (top to bottom), writes content/posts/<slug>.mdx with
+# draft: true, and opens a pull request. Humans add topics, notes, and change
+# status. Statuses: queued → drafting → in-review → published | parked.
+#
+# Pillars (why we can win each): see the Organic Growth Plan.
+#   documents   — engineering document intelligence
+#   mcp         — MCP in the enterprise
+#   controls    — project controls AI
+#   roadmaps    — AI roadmaps for operators
+#   capital     — capital and legal document work
+#   firm-os     — building the firm on agents
+
+pillars:
+  documents: Engineering document intelligence
+  mcp: MCP in the enterprise
+  controls: Project controls AI
+  roadmaps: AI roadmaps for operators
+  capital: Capital and legal document work
+  firm-os: Firm OS, building in public
+
+posts:
+  - slug: why-ai-pilots-die-in-the-gap
+    status: in-review
+    pillar: roadmaps
+    target_query: why AI pilots fail in operations
+    angle: The failure is a handoff problem, not a model problem. Three fail modes, a context-loss table, a pre-approval checklist.
+    author: ryan
+
+  - slug: mcp-servers-over-enterprise-systems-governance-first
+    status: in-review
+    pillar: mcp
+    target_query: MCP server enterprise governance
+    angle: One server per system of record, read-first tools, identity passthrough, audit logging, evals before demos.
+    author: ryan
+
+  - slug: engineering-document-register-ai-classification
+    status: in-review
+    pillar: documents
+    target_query: AI document classification engineering documents
+    angle: Metadata schema, pipeline, confidence routing, revision tracking, cited Q&A; document control stays the system of record.
+    author: ryan
+
+  - slug: revision-tracking-with-llms-what-breaks-first
+    status: queued
+    pillar: documents
+    target_query: AI revision tracking engineering drawings
+    angle: Superseded documents, title blocks that lie, vendor numbering; how to detect "what changed" reliably.
+    notes: Ryan to add two anonymized examples of revision confusion.
+
+  - slug: permission-aware-mcp-agents-respect-existing-access
+    status: queued
+    pillar: mcp
+    target_query: MCP permissions identity passthrough
+    angle: Why service accounts are the wrong default; passing user identity through to the system of record; testing access boundaries.
+
+  - slug: automating-cash-flow-validation-multi-agent-pipelines
+    status: queued
+    pillar: controls
+    target_query: cash flow forecasting validation construction AI
+    angle: Baseline allocation, actuals reconciliation against AP, forecast reasonableness; exceptions to humans, everything else automated.
+    notes: Based on the agentic-cost-forecasting brief; keep at capability level.
+
+  - slug: vendor-tear-sheets-on-one-command
+    status: queued
+    pillar: controls
+    target_query: automated vendor financial reporting AP PO
+    angle: The daily pipeline, the report generator, and why "one command" matters more than the dashboard.
+
+  - slug: two-to-six-week-ai-readiness-assessment
+    status: queued
+    pillar: roadmaps
+    target_query: AI readiness assessment industrial operators
+    angle: What a real assessment looks like week by week, what it produces, and what the big-firm version gets wrong.
+
+  - slug: roi-math-for-ai-in-operations
+    status: queued
+    pillar: roadmaps
+    target_query: AI ROI calculation operations
+    angle: Baselines, the cost of being wrong, token cost architecture, and the numbers a board will actually ask about.
+
+  - slug: rag-over-litigation-exhibits-cited-answers-or-nothing
+    status: queued
+    pillar: capital
+    target_query: RAG litigation documents cited answers
+    angle: Hybrid retrieval, metadata filters, party-aware classification, refusing when there is no source page.
+    notes: 745 exhibits / 11,500+ pages figures are public on the site.
+
+  - slug: data-room-intelligence-for-diligence
+    status: queued
+    pillar: capital
+    target_query: AI due diligence data room
+    angle: What to automate in a data room review and what must stay human.
+
+  - slug: how-a-two-person-firm-runs-on-agents
+    status: queued
+    pillar: firm-os
+    target_query: run a company on AI agents
+    angle: The knowledge base, proposal and research pipelines, and this site's own publishing loop, with the governance that keeps humans on the merge button.
+
+  - slug: this-website-is-published-by-agents
+    status: queued
+    pillar: firm-os
+    target_query: automated content pipeline human review
+    angle: The queue, the drafting routine, the pull request, the checklist. A behind-the-scenes post that doubles as a case study.

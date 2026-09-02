@@ -16,7 +16,7 @@ export function Brandmark({
   return (
     <Link
       href="/"
-      aria-label="Pennybacker AI — home"
+      title="Pennybacker AI — home"
       className={cn("group inline-flex items-center gap-2.5", className)}
     >
       <svg

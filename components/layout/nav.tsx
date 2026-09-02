@@ -24,6 +24,13 @@ const NAV: NavItem[] = [
   { href: "/about", label: "About" },
 ];
 
+/** Insights joins the nav once the first post is published (decided at build time by the layout). */
+const INSIGHTS: NavItem = { href: "/insights", label: "Insights" };
+function withInsights(nav: NavItem[]) {
+  const i = nav.findIndex((n) => n.href === "/about");
+  return [...nav.slice(0, i), INSIGHTS, ...nav.slice(i)];
+}
+
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
@@ -142,8 +149,9 @@ function ServicesMenu({ active }: { active: boolean }) {
   );
 }
 
-export function Nav() {
+export function Nav({ showInsights = false }: { showInsights?: boolean }) {
   const pathname = usePathname();
+  const items = showInsights ? withInsights(NAV) : NAV;
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -184,7 +192,7 @@ export function Nav() {
           <Brandmark />
 
           <nav className="hidden items-center gap-8 md:flex">
-            {NAV.map((l) =>
+            {items.map((l) =>
               l.menu ? (
                 <ServicesMenu key={l.href} active={isActive(pathname, l.href)} />
               ) : (
@@ -223,7 +231,7 @@ export function Nav() {
           {/* floating panel pinned just below the bar */}
           <div className="fixed inset-x-0 top-16 z-40 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-bg shadow-xl shadow-black/10">
             <Container className="flex flex-col gap-1 py-4">
-              {NAV.map((l) => (
+              {items.map((l) => (
                 <div key={l.href}>
                   <Link
                     href={l.href}
