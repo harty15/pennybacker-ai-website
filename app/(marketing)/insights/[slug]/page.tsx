@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
+import { TrussField } from "@/components/ui/truss-field";
 import { Chip } from "@/components/ui/chip";
 import { SectionHeader } from "@/components/ui/section-header";
 import { CtaBanner } from "@/components/sections/cta-banner";
@@ -81,8 +82,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       />
 
       <article>
-        <header className="relative z-10 border-b border-line pb-12 pt-28 md:pt-36">
-          <Container className="max-w-3xl">
+        <header className="relative z-10 overflow-hidden border-b border-line pb-12 pt-28 md:pt-36">
+          <TrussField className="absolute inset-x-0 bottom-0 h-[60%] w-full opacity-40 [mask-image:linear-gradient(to_top,black,transparent)]" />
+          <Container className="relative max-w-3xl">
             <Link href="/insights/" className="text-small text-muted transition-colors hover:text-fg">
               ← All insights
             </Link>

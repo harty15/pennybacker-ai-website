@@ -1,16 +1,26 @@
 ---
 title: "Putting an engineering document register under AI classification without breaking document control"
 description: "Drawings, specs, transmittals and vendor data pile up faster than any team can tag them. How to design an AI classification layer over a project document register: the metadata schema, the pipeline, confidence routing, revision tracking, and cited answers."
-date: "2026-09-04"
+date: "2026-09-02"
 author: ryan
 tags: [document-intelligence, energy-industrial]
 pillar: documents
-draft: true
+draft: false
 ---
+
+import { Figure, KeyTakeaways } from "@/components/mdx/figure";
+import { ClassificationPipeline, TitleBlockAnatomy, RevisionChain } from "@/components/mdx/diagrams/documents";
 
 A large capital project produces documents faster than anyone can classify them. Drawings, specifications, transmittals, vendor data, inspection records, RFIs, change notices: thousands of files across a document management system, an email archive, a vendor portal and whatever the EPC contractor uses. The register that is supposed to index all of it is maintained by hand, by people who are also doing three other jobs, and it drifts. Finding the current revision of one drawing is a search. Answering "what changed between revision B and C on the cooling water P&IDs" is a project.
 
 We have put more than five thousand engineering documents on an active megaproject under AI classification, with plain-English, cited answers on top. This post is the design: what the AI is allowed to decide, what stays with document control, and the pipeline in between.
+
+<KeyTakeaways items={[
+  "Document control stays the system of record; the AI proposes metadata, the register holds it.",
+  "Every field is validated against a dictionary, a pattern, or the register itself, so the model never invents a discipline or a tag.",
+  "Route by confidence: auto-accept above threshold with no rule failures, everything else to a review queue with the evidence beside the proposal.",
+  "Revision tracking and cited answers fall out of complete metadata; reporting becomes a query.",
+]} />
 
 ## Two rules before any code
 
@@ -36,6 +46,10 @@ The value of classification is entirely in what you classify against. Before tou
 | Supersedes | 3010-PID-0042 rev B | Derived | Computed from number plus revision history |
 
 Two things about this table matter more than the columns. Every field has a dictionary or a pattern it is validated against, so the model never invents a discipline. And every field has a source of truth that is not the model, so a disagreement between the AI and the register is a review item, not a silent overwrite.
+
+<Figure n={1} caption="Where each metadata value comes from on a real sheet: equipment tags and the revision cloud in the drawing area, and the document number, revision, status and discipline in the title block. Every value has a source of truth that is not the model.">
+  <TitleBlockAnatomy />
+</Figure>
 
 ## The pipeline
 
@@ -63,6 +77,10 @@ Records above a threshold with no rule failures are written to the register as A
 
 Approved metadata is written to the register through its own API or import path, with the AI as the recorded author of the proposal and the reviewer as the approver. The audit trail lives where the document control audit trail already lives.
 
+<Figure n={2} caption="The pipeline. Classification produces a constrained record, validation attaches confidence and reasons, and routing decides whether document control sees a batch of proposals or a review item with evidence. Both paths write back to the register, which in turn supplies the dictionaries validation runs against.">
+  <ClassificationPipeline />
+</Figure>
+
 ## Revision tracking
 
 The question that costs the most analyst time is not "where is this document" but "what changed." Once revisions are reliably classified and linked through the supersedes field, three things become possible.
@@ -70,6 +88,10 @@ The question that costs the most analyst time is not "where is this document" bu
 - **Superseded document detection.** Any document whose number has a newer revision in the register is flagged, and the flag propagates to any answer that cites it: "this is revision B; revision C was issued for construction on the date shown."
 - **Change summaries.** For document types where the content is text, the two revisions are diffed and the model writes a summary of what changed, cited to the changed passages. For drawings, the summary is limited to what can be extracted reliably: tags added or removed, revision cloud notes, title block changes. Do not let the model describe drawing geometry changes it cannot see.
 - **Change detection across a set.** "Which cooling water documents changed since the last design review" becomes a query over metadata instead of a week of comparison.
+
+<Figure n={3} caption="Once revisions are linked, a superseded document is flagged everywhere it is cited, and the question that used to take a week becomes a diff with a citation.">
+  <RevisionChain />
+</Figure>
 
 ## Cited answers, or nothing
 

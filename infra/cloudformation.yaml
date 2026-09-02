@@ -104,9 +104,11 @@ Resources:
         //   /path                    -> 301 /path/            (Next trailingSlash: true)
         //   /path/index.html         -> 301 /path/
         //   /path/                   -> /path/index.html      (internal rewrite to the S3 key)
-        // Files with an extension (/robots.txt, /_next/...) pass through untouched.
+        // Files with an extension (/robots.txt, /_next/...) pass through untouched, and so
+        // do the extension-less images next/og generates (icon, apple-icon, opengraph-image).
         var CANONICAL_HOST = 'www.${DomainName}';
         var ENFORCE_HOST = CANONICAL_HOST !== 'www.';
+        var ASSET_LIKE = /^(icon|apple-icon|opengraph-image|twitter-image)(-[a-z0-9]+)?$/;
         function redirect(location) {
           return {
             statusCode: 301,
@@ -139,7 +141,7 @@ Resources:
           var canonicalUri = uri;
           if (last === 'index.html') {
             canonicalUri = uri.slice(0, uri.length - 'index.html'.length);
-          } else if (last !== '' && !last.includes('.')) {
+          } else if (last !== '' && !last.includes('.') && !ASSET_LIKE.test(last)) {
             canonicalUri = uri + '/';
           }
           if ((ENFORCE_HOST && host !== CANONICAL_HOST) || canonicalUri !== uri) {

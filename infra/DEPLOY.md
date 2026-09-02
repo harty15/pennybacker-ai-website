@@ -145,6 +145,7 @@ enforces **one URL per page** so search engines don't split signals across varia
 | `/services/build/index.html`             | `301 → /services/build/`                   |
 | `/services/build/`                       | served from the S3 key `services/build/index.html` |
 | anything with a file extension           | passed through unchanged                   |
+| `/icon`, `/apple-icon`, `/opengraph-image*` | passed through unchanged (extension-less next/og output) |
 
 Every page also emits `<link rel="canonical">` in the www + trailing-slash form
 (`lib/seo.ts`), and the sitemap lists the same form. Change the function →
