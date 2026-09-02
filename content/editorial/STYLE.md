@@ -47,8 +47,16 @@ people.
   study, placed where they are useful, not in a pile at the end.
 - **External sources:** link primary sources (specs, vendor docs, standards)
   when you cite them. No links to competitors' marketing.
-- **No images required.** The share image is generated. If a diagram would
-  help, describe it in the PR and a human decides.
+- **Figures are drawn, not pasted.** Every post carries two or three figures
+  built as inline SVG components in `components/mdx/diagrams/` (see
+  `primitives.tsx`): native shapes, palette tokens, so they re-skin with the
+  theme and stay crisp at any size. A figure earns its place only when it
+  shows a mechanism the prose would otherwise have to assemble: what flows
+  where, which components talk, what changes between two options. Wrap it in
+  `<Figure n={…} caption="…">` where the caption states the claim, and give
+  the `<Diagram>` an `aria-label` carrying the same claim. Label the arrows.
+  Open a post with `<KeyTakeaways items={[…]} />`; use `<Callout>` for the one
+  rule the reader must not miss. No stock imagery, ever.
 
 ## MDX rules
 

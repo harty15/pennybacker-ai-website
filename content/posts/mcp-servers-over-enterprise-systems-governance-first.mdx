@@ -1,18 +1,28 @@
 ---
 title: "MCP servers over enterprise systems: a governance-first pattern"
 description: "How to make an ERP, a schedule, or a document system conversational without handing the model the keys: one server per system, read-first tools, identity passed through, every call logged, evals before demos."
-date: "2026-09-03"
+date: "2026-09-02"
 author: ryan
 tags: [mcp, agents, governance]
 pillar: mcp
-draft: true
+draft: false
 ---
+
+import { Figure, KeyTakeaways, Callout } from "@/components/mdx/figure";
+import { McpTopology, CallLifecycle } from "@/components/mdx/diagrams/mcp";
 
 The request that starts most enterprise AI projects is simple: "I want to ask a question and get an answer, without logging into five systems." On an industrial project the five systems are real. The ERP has the commitments, the scheduling tool has the dates, the cost platform has the forecast, document control has the drawings, and the answer to "are we going to be late on the vendor packages for area 3" lives in all of them at once.
 
 The Model Context Protocol is the plumbing that makes this tractable. It is an open standard for connecting AI applications to tools and data, and since late 2025 it has been stewarded by the Linux Foundation's Agentic AI Foundation rather than a single vendor. It has become the default way to expose a system to an agent. What it does not do is decide how much of your operation to expose, under whose identity, with what audit trail. Those are the decisions that separate a governed integration from a liability, and they are the subject of this post.
 
 We have shipped more than seven production MCP servers over fifteen-plus enterprise platforms for operators in regulated environments. The pattern below is what survived.
+
+<KeyTakeaways items={[
+  "One MCP server per system of record, owned by the team that owns the system.",
+  "Read first. Writes go through the approval workflow the operation already trusts.",
+  "Identity passes through: the server acts as the user, and the system of record does the permission check.",
+  "Typed, narrow tool inputs; every call logged; every answer cited; an eval set before the first demo.",
+]} />
 
 ## Why "just connect the model to the database" fails
 
@@ -36,6 +46,10 @@ The reasons are practical. Each system has an owner who can approve what is expo
 | Document control | search by tag or discipline, revision history, transmittal status | none | Document control |
 
 The conversational layer that spans all of them lives in the client, not in a mega-server. The model composes answers across tools; each tool stays inside its own system's rules.
+
+<Figure n={1} caption="The governance-first topology. The operator's identity travels with every call, each server wraps exactly one system and calls it as the user, the single write path goes through an approval gate, and every call from every server lands in one audit log.">
+  <McpTopology />
+</Figure>
 
 ### Read first, write through existing workflows
 
@@ -85,6 +99,14 @@ Every answer that came from a system carries the record identifiers it came from
 ### Evals before demos
 
 Before the first demo to anyone who can cancel the project, build a set of twenty to fifty real questions per system with known-good answers, and run it on every change: to the server, to the prompt, to the model. When a model is deprecated and its replacement answers 6 of 40 questions differently, you want to learn that from the eval run, not from an operator.
+
+<Figure n={2} caption="The life of one call. Arguments are validated against the tool schema and the user's access is checked in the system of record before anything is called; both refusals happen before a system is touched, and the answer carries the record identifiers the operator can open.">
+  <CallLifecycle />
+</Figure>
+
+<Callout title="Prompts are not access control.">
+  <p>If the only thing between a user and a record they should not see is an instruction in a system prompt, the record is exposed. Identity passthrough moves the check to the place that already enforces it.</p>
+</Callout>
 
 ## What breaks
 

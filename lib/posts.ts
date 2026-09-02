@@ -105,7 +105,7 @@ export async function getAllPosts(): Promise<Post[]> {
   const posts = await Promise.all(slugsOnDisk().map(getPost));
   return posts
     .filter((p): p is Post => !!p && (includeDrafts || !p.draft))
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .sort((a, b) => (a.date === b.date ? a.slug.localeCompare(b.slug) : a.date < b.date ? 1 : -1));
 }
 
 export function formatDate(iso: string) {

@@ -5,14 +5,24 @@ date: "2026-09-02"
 author: ryan
 tags: [ai-roadmap, operators]
 pillar: roadmaps
-draft: true
+draft: false
 ---
+
+import { Figure, KeyTakeaways } from "@/components/mdx/figure";
+import { HandoffVsOneTeam, DemoVsPilot } from "@/components/mdx/diagrams/gap";
 
 Every operator we talk to has the same artifact somewhere on a shared drive: an AI strategy deck from last year. It is a good deck. It names the right workflows. It has a slide with a dollar figure on it. And somewhere between that deck and today, a pilot was built that impressed a room, and then nothing happened.
 
 The usual diagnosis is that the model was not good enough, or the data was not ready, or the team lost interest. In our experience those are symptoms. The disease is a gap: the strategy was written by people who would never have to ship it, and the build was done by people who never saw the operation. Context fell into the space between them, and the pilot was built on what was left.
 
 This post is about what that gap looks like up close, why it is a handoff problem rather than a technology problem, and the three changes that reliably close it.
+
+<KeyTakeaways items={[
+  "Pilots rarely fail on the model. They fail in the handoff between the people who wrote the plan and the people who built it.",
+  "What falls into the gap is specific and boring: exceptions, field-level data quality, the baseline, the permission model, an owner for month four.",
+  "A thicker requirements document does not fix it. One team from survey to production does.",
+  "Build production-shaped from week one: real system of record, the user's own identity, an eval set, an audit trail.",
+]} />
 
 ## The three ways it goes wrong
 
@@ -23,6 +33,10 @@ We keep seeing the same three failure modes. They look different from the outsid
 **The dev shop with no operating context.** The opposite failure. A capable engineering team gets a brief and builds exactly what it says. The system works. It automates the step that was easy to describe instead of the step that was expensive. On one project we saw a beautifully built classification model for incoming invoices when the actual bottleneck was the three-way match against purchase orders that lived in a different system nobody had mentioned. Builders who have never run an operation automate the wrong thing well.
 
 **The demo that cannot survive contact.** A pilot is built on a clean sample: two hundred documents chosen because they were representative, a service account with read access to everything, a single user who knows what the system can do. Then it meets production: fourteen naming conventions, a permissions model that means half the answers must be withheld from half the users, scanned PDFs from 2011, and an operator who asks a question the sample never contained. The demo was real. The production environment was never in the room.
+
+<Figure n={1} caption="The difference between the two models is the document hop. In the handoff model, whatever did not fit on the slides is gone by the time the build starts; in the one-team model the context travels in the people who write the code.">
+  <HandoffVsOneTeam />
+</Figure>
 
 ## What actually falls into the gap
 
@@ -70,6 +84,10 @@ Concretely this means:
 - Treat the audit trail as a feature of the first release, because in a regulated operation it is the difference between a tool and a liability.
 
 A pilot built this way is smaller and uglier than the demo. It is also already a system.
+
+<Figure n={2} caption="Same box, different wiring. The demo runs on sample data under a service account; the pilot acts under the operator's identity against the real system of record, is graded by an evaluation set on every change, and logs every call from the first day.">
+  <DemoVsPilot />
+</Figure>
 
 ### 3. Plan for the system to change
 
