@@ -8,7 +8,11 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+// Body text is the Largest Contentful Paint element on most pages. `optional`
+// (with the preload next/font adds) means a slow first load keeps the metric-
+// matched fallback instead of repainting when Inter arrives, which is what
+// pushed LCP to ~3 s under mobile throttling. Display faces stay `swap`.
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "optional" });
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],

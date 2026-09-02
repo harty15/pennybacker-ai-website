@@ -1,11 +1,13 @@
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, CONTACT_EMAIL } from "@/lib/site";
 import { work } from "@/content/work";
+import { getAllPosts } from "@/lib/posts";
 
 // /llms.txt — a plain-text map of the site for AI crawlers and assistants
 // (https://llmstxt.org). Emitted at build time; keep it in sync with the sitemap.
 export const dynamic = "force-static";
 
-export function GET() {
+export async function GET() {
+  const posts = await getAllPosts();
   const url = (path: string) => `${SITE_URL}${path}`;
   const lines = [
     `# ${SITE_NAME}`,
@@ -29,6 +31,14 @@ export function GET() {
     "",
     ...work.map((w) => `- [${w.title}](${url(`/work/${w.slug}/`)}): ${w.highlights[0]}. ${w.client}.`),
     "",
+    ...(posts.length
+      ? [
+          "## Insights (practitioner notes)",
+          "",
+          ...posts.map((p) => `- [${p.title}](${url(`/insights/${p.slug}/`)}): ${p.description}`),
+          "",
+        ]
+      : []),
     "## Company",
     "",
     `- [About](${url("/about/")}): Founders Ryan Harty (Founder & Principal Engineer) and Max Holter (Lead Data Engineer).`,

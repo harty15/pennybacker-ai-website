@@ -31,7 +31,12 @@ const COLUMNS = [
   },
 ];
 
-export function Footer() {
+export function Footer({ showInsights = false }: { showInsights?: boolean }) {
+  const columns = COLUMNS.map((col) =>
+    col.title === "Firm" && showInsights
+      ? { ...col, links: [...col.links.slice(0, 2), { href: "/insights", label: "Insights" }, ...col.links.slice(2)] }
+      : col,
+  );
   return (
     <footer className="relative z-10 border-t border-line bg-surface-2">
       <Container className="py-16">
@@ -48,7 +53,7 @@ export function Footer() {
           </div>
 
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
-            {COLUMNS.map((col) => (
+            {columns.map((col) => (
               <div key={col.title}>
                 <p className="font-mono text-eyebrow uppercase tracking-[0.16em] text-muted">
                   {col.title}

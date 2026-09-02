@@ -1,0 +1,111 @@
+---
+title: "Putting an engineering document register under AI classification without breaking document control"
+description: "Drawings, specs, transmittals and vendor data pile up faster than any team can tag them. How to design an AI classification layer over a project document register: the metadata schema, the pipeline, confidence routing, revision tracking, and cited answers."
+date: "2026-09-04"
+author: ryan
+tags: [document-intelligence, energy-industrial]
+pillar: documents
+draft: true
+---
+
+A large capital project produces documents faster than anyone can classify them. Drawings, specifications, transmittals, vendor data, inspection records, RFIs, change notices: thousands of files across a document management system, an email archive, a vendor portal and whatever the EPC contractor uses. The register that is supposed to index all of it is maintained by hand, by people who are also doing three other jobs, and it drifts. Finding the current revision of one drawing is a search. Answering "what changed between revision B and C on the cooling water P&IDs" is a project.
+
+We have put more than five thousand engineering documents on an active megaproject under AI classification, with plain-English, cited answers on top. This post is the design: what the AI is allowed to decide, what stays with document control, and the pipeline in between.
+
+## Two rules before any code
+
+**Document control stays the system of record.** The AI layer proposes metadata; the register holds it. Nothing about the document control process, its numbering, its approval workflow or its authority changes. If the classification layer disappeared tomorrow, the register would still be correct, just less complete.
+
+**Classification is metadata, not a new repository.** The temptation is to build a parallel search index that "knows" the documents better than the register does. Six months later there are two sources of truth and the second one has no owner. Every tag the AI produces is written back to the register, or it does not exist.
+
+Those two rules are why the document control lead becomes the project's best ally instead of its biggest risk.
+
+## The metadata schema
+
+The value of classification is entirely in what you classify against. Before touching a model, the schema has to be agreed with document control and the engineering disciplines. On most projects it looks like this.
+
+| Field | Example | Source of truth | How the AI fills it |
+| --- | --- | --- | --- |
+| Document number | 3010-PID-0042 | Register | Extracted from the title block, validated against the numbering pattern |
+| Document type | P&ID, datasheet, transmittal, vendor drawing | Type dictionary | Classified from layout and title block; constrained to the dictionary |
+| Discipline | Process, piping, electrical, civil | Discipline dictionary | Classified; cross-checked against the number's discipline code |
+| Area / system | Area 3, cooling water | Area and system codes | Extracted from title block and drawing content; validated against the code list |
+| Equipment tags | P-3101A, E-3205 | Tag register | Extracted from drawing text; each tag validated against the register |
+| Revision | C | Register | Extracted from the revision block; compared to the current register value |
+| Status | IFR, IFC, as-built | Status dictionary | Extracted from stamps and revision block |
+| Supersedes | 3010-PID-0042 rev B | Derived | Computed from number plus revision history |
+
+Two things about this table matter more than the columns. Every field has a dictionary or a pattern it is validated against, so the model never invents a discipline. And every field has a source of truth that is not the model, so a disagreement between the AI and the register is a review item, not a silent overwrite.
+
+## The pipeline
+
+### Ingest
+
+Connectors pull documents and their existing register entries from the document management system and the transmittal system. Each document gets a stable internal identifier tied to the register entry, so the AI layer never has to reason about file names.
+
+### Parse
+
+Drawings and scanned PDFs go through OCR with layout awareness, because the information that matters is in specific places: the title block, the revision block, stamps, and the tag text on the drawing itself. Native PDFs and Office documents are parsed directly. The output is structured text with positions, not a wall of characters.
+
+### Classify
+
+An LLM reads the parsed structure and produces the metadata record as constrained output: document type from the dictionary, discipline from the dictionary, tags as a list of strings. The prompt carries the dictionaries, the numbering rules, and a handful of worked examples per document type. The model is not asked to be creative; it is asked to fill a form it has been shown how to fill.
+
+### Validate
+
+Rules run on the model's output before anyone sees it. Number matches the pattern. Discipline code in the number agrees with the classified discipline. Every equipment tag exists in the tag register. Revision is not lower than the register's current revision. A failed rule does not reject the record; it lowers its confidence and attaches the reason.
+
+### Route by confidence
+
+Records above a threshold with no rule failures are written to the register as AI-proposed, and document control sees them in a batch view. Records below the threshold, or with any rule failure, go to a review queue with the extracted evidence beside the proposed value: the title block crop next to the document number, the stamp next to the status. Reviewing a proposed record with the evidence in view takes seconds. Classifying from scratch takes minutes. That ratio is the whole business case.
+
+### Write back
+
+Approved metadata is written to the register through its own API or import path, with the AI as the recorded author of the proposal and the reviewer as the approver. The audit trail lives where the document control audit trail already lives.
+
+## Revision tracking
+
+The question that costs the most analyst time is not "where is this document" but "what changed." Once revisions are reliably classified and linked through the supersedes field, three things become possible.
+
+- **Superseded document detection.** Any document whose number has a newer revision in the register is flagged, and the flag propagates to any answer that cites it: "this is revision B; revision C was issued for construction on the date shown."
+- **Change summaries.** For document types where the content is text, the two revisions are diffed and the model writes a summary of what changed, cited to the changed passages. For drawings, the summary is limited to what can be extracted reliably: tags added or removed, revision cloud notes, title block changes. Do not let the model describe drawing geometry changes it cannot see.
+- **Change detection across a set.** "Which cooling water documents changed since the last design review" becomes a query over metadata instead of a week of comparison.
+
+## Cited answers, or nothing
+
+Plain-English questions over the register are the visible product, and the rule for them is strict: every answer cites the document number, revision and page it came from, and if retrieval finds nothing above a relevance threshold, the answer is "I could not find that in the register" rather than a plausible paragraph.
+
+Retrieval is scoped by the metadata first. A question about the cooling water system searches documents tagged with that system before it searches everything, which is both faster and more accurate. Retrieval also respects the user's access in the document management system, by passing their identity through rather than reading as a service account; a user cannot get the assistant to quote a document they could not open.
+
+## Reporting that runs itself
+
+Once metadata is complete and current, status reporting becomes a query: documents by discipline and status, overdue reviews, transmittals awaiting response, vendor documents past their due date. The reports that used to take an analyst a day each week run on a schedule and go out with the same numbers document control would have produced by hand, because they come from the same register.
+
+## What breaks
+
+**Title blocks that lie.** A drawing reused from a previous project with the old number half-edited. A revision block that was updated on the sheet but not in the register. The validation rules catch most of these; the review queue catches the rest. Budget for them.
+
+**Scans.** A 2011 vendor drawing scanned at an angle at low resolution will defeat OCR on the title block. Detect low-confidence parses early and route them to review before classification, or the model will confidently classify noise.
+
+**Tag drift.** Equipment tags get renumbered. The tag register is the source of truth, but it has its own lag. Treat an unknown tag as a review item, and give document control a way to add tags to the register from the queue.
+
+**Vendor numbering.** Vendors have their own document numbers, and the project number is assigned on receipt. Both need to be captured, and the supersedes logic has to follow the project number.
+
+**Re-classification.** When the dictionaries change, which they will, you need to re-run classification over the affected set and diff against the register, not overwrite it.
+
+## The metrics that matter
+
+Four numbers tell you whether the system is working, and they are all measurable from the register and the queue.
+
+1. Share of documents auto-accepted above threshold with no later correction.
+2. Reviewer time per document in the queue, compared with the time to classify from scratch.
+3. Time from a question to a cited answer, compared with the manual search it replaced.
+4. Errors found in a periodic audit sample of accepted records.
+
+If the first number is high and the fourth is not near zero, the threshold is too low. If reviewer time is not dramatically below manual classification, the evidence view is wrong, not the model.
+
+## Starting smaller than the whole register
+
+The register does not have to be done at once. Start with one discipline and one document type, with the discipline lead and document control in the room, and run the pipeline on the backlog for that slice. The dictionaries get fixed, the thresholds get calibrated, the review queue gets its evidence view right. The second slice takes a fraction of the time.
+
+The [document intelligence case study](/work/document-intelligence-at-scale/) shows the capability-level shape of the full system, and this kind of build is the core of what we do under [Build](/services/build/). If your register is drifting, the first conversation is usually about the schema, not the model.
