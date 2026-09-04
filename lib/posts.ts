@@ -24,6 +24,10 @@ export type PostMeta = {
   pillar?: string;
   /** Drafts render in `next dev` only; production builds skip them. */
   draft?: boolean;
+  /** Hero illustration, site-relative (`/insights/<slug>/hero.webp`, 1600×900). */
+  hero?: string;
+  /** What the hero depicts, for readers who cannot see it. */
+  heroAlt?: string;
 };
 
 export type Post = PostMeta & {

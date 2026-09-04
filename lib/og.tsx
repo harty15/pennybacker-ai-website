@@ -52,9 +52,48 @@ export function Bridge({ width = 96, color = C.accent }: { width?: number; color
   );
 }
 
-/** 1200×630 brand card: emblem + wordmark, kicker, big title, footer line. */
-export function OgFrame({ title, kicker, footer }: { title: string; kicker?: string; footer?: string }) {
+/** A post's hero as a data URI for the share-image composite, or undefined when there is none. */
+export async function heroDataUri(slug: string): Promise<string | undefined> {
+  try {
+    const buf = await readFile(join(process.cwd(), "public/insights", slug, "hero.jpg"));
+    return `data:image/jpeg;base64,${buf.toString("base64")}`;
+  } catch {
+    return undefined;
+  }
+}
+
+/** 1200×630 brand card: emblem + wordmark, kicker, big title, footer line; optional hero art on the right. */
+export function OgFrame({ title, kicker, footer, art }: { title: string; kicker?: string; footer?: string; art?: string }) {
   const long = title.length > 56;
+  if (art) {
+    return (
+      <div style={{ width: "100%", height: "100%", display: "flex", background: C.bg, color: C.fg, fontFamily: "Inter" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: 640, padding: "52px 44px 44px 56px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <Bridge width={76} />
+            <div style={{ display: "flex", fontFamily: "Space Grotesk", fontSize: 28, letterSpacing: -0.5 }}>
+              <span>Pennybacker</span>
+              <span style={{ color: C.muted, marginLeft: 8 }}>AI</span>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            <div style={{ display: "flex", width: 96, height: 6, background: C.accent }} />
+            {kicker ? (
+              <div style={{ display: "flex", fontSize: 18, letterSpacing: 3, textTransform: "uppercase", color: C.muted }}>{kicker}</div>
+            ) : null}
+            <div style={{ display: "flex", fontFamily: "Space Grotesk", fontSize: title.length > 70 ? 38 : 46, lineHeight: 1.08, letterSpacing: -1 }}>
+              {title}
+            </div>
+          </div>
+          <div style={{ display: "flex", fontSize: 18, color: C.muted }}>{footer ?? "pennybacker-ai.com"}</div>
+        </div>
+        <div style={{ display: "flex", width: 560, height: 630, overflow: "hidden" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={art} width={560} height={630} style={{ objectFit: "cover", width: 560, height: 630 }} alt="" />
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       style={{

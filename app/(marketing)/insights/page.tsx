@@ -58,6 +58,17 @@ export default async function InsightsIndex() {
                     <Reveal delay={Math.min(i, 4) * 0.05}>
                       <article className="grid gap-4 py-10 md:grid-cols-[10rem_1fr] md:gap-10">
                         <div className="font-mono text-eyebrow uppercase tracking-[0.14em] text-muted">
+                          {post.hero ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={post.hero}
+                              alt=""
+                              width={320}
+                              height={180}
+                              loading="lazy"
+                              className="mb-4 aspect-[16/9] w-full rounded-xl border border-line object-cover"
+                            />
+                          ) : null}
                           <time dateTime={post.date}>{formatDate(post.date)}</time>
                           <span className="mt-1 block">{post.readingMinutes} min read</span>
                           {post.draft ? <span className="mt-1 block text-accent">Draft</span> : null}
