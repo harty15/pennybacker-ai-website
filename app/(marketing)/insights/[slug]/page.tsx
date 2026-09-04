@@ -108,6 +108,17 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               {" · "}
               {post.readingMinutes} min read
             </p>
+            {post.hero ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.hero}
+                alt={post.heroAlt ?? ""}
+                width={1600}
+                height={900}
+                fetchPriority="high"
+                className="mt-10 aspect-[16/9] w-full rounded-2xl border border-line object-cover"
+              />
+            ) : null}
           </Container>
         </header>
 

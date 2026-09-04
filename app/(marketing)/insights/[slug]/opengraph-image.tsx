@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { OgFrame, OG_SIZE, ogFontOptions } from "@/lib/og";
+import { OgFrame, OG_SIZE, ogFontOptions, heroDataUri } from "@/lib/og";
 import { getPost, postParams, authors, formatDate, tagLabel } from "@/lib/posts";
 
 // Static export: one PNG per post at build time.
@@ -18,8 +18,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const post = await getPost(slug);
   const kicker = post ? `Insights · ${tagLabel(post.tags[0])}` : "Insights";
   const footer = post ? `${authors[post.author].name} · ${formatDate(post.date)}` : "Pennybacker AI";
+  const art = post?.hero ? await heroDataUri(slug) : undefined;
   return new ImageResponse(
-    <OgFrame kicker={kicker} title={post?.title ?? "Field notes on production AI"} footer={footer} />,
+    <OgFrame kicker={kicker} title={post?.title ?? "Field notes on production AI"} footer={footer} art={art} />,
     { ...size, fonts: await ogFontOptions() },
   );
 }

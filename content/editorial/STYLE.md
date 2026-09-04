@@ -61,8 +61,10 @@ people.
 ## MDX rules
 
 - Frontmatter fields: `title`, `description`, `date` (YYYY-MM-DD), `author`
-  (`ryan` or `max`), `tags` (from `lib/posts.ts` TAG_LABELS), `pillar` (from
-  `queue.yaml`), `draft: true` until a human flips it.
+  (`ryan` or `max`), `tags` (from `lib/posts.ts` TAG_LABELS), `pillar` (from the
+  vault's `strategy.md`), `draft: true` until a human flips it; optional `hero`
+  (`/insights/<slug>/hero.webp`, 1600×900) and `heroAlt` (one sentence, what is
+  depicted). Images follow the vault's `2-Areas/content/images/style-guide.md`.
 - Plain Markdown plus GFM tables. No raw `<`, `{` or `}` in prose — spell out
   "under 5 percent" and escape braces in code with backticks.
 - Slug = file name = kebab-case of the title's key phrase, stable forever.
