@@ -1,0 +1,151 @@
+---
+title: "The AI readiness assessment an industrial operator should demand"
+description: "An AI readiness assessment is worth exactly what it makes buildable. What an industrial operator should demand week by week, and what six weeks cannot fix."
+date: "2026-09-09"
+author: ryan
+tags: [ai-roadmap, operators, energy-industrial]
+pillar: roadmaps
+draft: true
+---
+
+import { Figure, KeyTakeaways, Callout } from "@/components/mdx/figure";
+import { SixWeekPhases, ClaimedVsTracedWritePath } from "@/components/mdx/diagrams/two-to-six-week-ai-readiness-assessment";
+
+{/* IMAGE PENDING hero: an inspection walk along a partly built span with a small survey crew and instruments; the far bank is a working plant.
+    Not generated: OPENAI_API_KEY is unset (the style guide's recommended provider, gpt-image-1); IMAGE_PROVIDER is unset too, and the vault's
+    2-Areas/content/README.md still carries "Pick the image provider and add its key" as an open task for @Ryan.
+    Prompt is written and saved at content/posts/two-to-six-week-ai-readiness-assessment.hero-prompt.txt — pass it unchanged:
+      node scripts/illustrate.mjs --slug two-to-six-week-ai-readiness-assessment --name hero --prompt-file content/posts/two-to-six-week-ai-readiness-assessment.hero-prompt.txt --candidates 3
+    Then add to the frontmatter: hero: /insights/two-to-six-week-ai-readiness-assessment/hero.webp and the heroAlt line recorded in the brief's ## Images. */}
+
+Your board wants an AI plan, and the firm that quoted you has proposed a multi-month engagement with a steering committee. You know what arrives at the end, because you have seen one: a maturity score against six pillars, a heat map, and a recommendation to run a pilot. The question to ask before you sign is not how long it takes or how many dimensions it scores. It is narrower: what does this produce that an engineer could build from on Monday?
+
+An assessment is worth exactly what it makes buildable. What follows is the shape of our own [roadmap engagement](/services/roadmap/), written down so you can hold any vendor to it, including us.
+
+<KeyTakeaways items={[
+  "An assessment is worth what it makes buildable: ranked opportunities against a measured baseline, an architecture sketch, and a costed pilot plan with a named owner.",
+  "Six weeks at full estate size, in three phases whose outputs chain: Listen, Assess, Decide.",
+  "The published readiness frameworks we read are free and honest and checklist-shaped: self-scored pillars, no field-level data inspection, no permission review, no costed plan.",
+  "Six weeks is enough to find and cost the problem. It is not enough to fix it.",
+]} />
+
+## What an AI readiness assessment has to produce to be worth buying
+
+Three artifacts. Without all three you have a diagnosis and no prescription.
+
+**Ranked opportunities against a measured baseline.** Not a heat map. An ordered list of workflows, each with the current cost of doing it the way you do it now — hours per month, or dollars, over a stated period, measured by a named person. Without it, the argument six months later about whether the pilot worked is unwinnable.
+
+**An architecture sketch.** Which system of record it reads from. Which one it writes to, through what approval. Whose identity it acts under. Where the audit trail lands. One page, and it decides whether the build starts with a design or a month of rediscovery.
+
+**A costed pilot plan.** Scope, weeks, a price with model and integration cost in it, an evaluation set, and the name of the person who owns the system in month four.
+
+We wrote earlier about [why AI pilots die in the gap](/insights/why-ai-pilots-die-in-the-gap/) between the deck and production. These three are what carrying context across that gap looks like on paper.
+
+## You are probably not where the manufacturing survey says you are
+
+The pilot-purgatory story most of this advice is built on is getting old. Rockwell Automation's 2026 State of Smart Manufacturing study, May 2026, 1,560 respondents across 17 countries, found that "6 in 10 manufacturers (59%) report actively using smart manufacturing technologies to support operations, while only 18% remain in pilot mode." That is not a market waiting to begin. Its more useful line: while data volumes keep growing, "only 43% is being used effectively, highlighting execution — not data availability — as a constraint on performance."
+
+So the question is usually not how to start but how to scope the next one. An assessment for a company with nothing running is a different document from one for a company with four things running and no basis for choosing which to extend. Ask which you are being sold.
+
+## Two numbers worth refusing to repeat
+
+Both appear on nearly every competing page we read, and both are misquoted.
+
+**"95 percent of AI pilots fail."** The MIT Media Lab Project NANDA report, "The GenAI Divide: State of AI in Business 2025," July 2025, does not say this. It says 95 percent of organizations are getting zero return — a claim about returns, not pilots. Its separate finding, on custom and vendor-sold enterprise-grade systems, is a funnel: "Sixty percent of organizations evaluated such tools, but only 20 percent reached pilot stage and just 5 percent reached production." Use that one, with its provenance: a preliminary, non-peer-reviewed report whose survey base was recruited at four industry conferences, and whose original PDF URL now redirects to the [NANDA group overview page](https://www.media.mit.edu/groups/nanda/overview/).
+
+**"Gartner says 60 percent of AI projects will be abandoned."** The sentence, from Gartner's February 2025 release on [AI-ready data](https://www.gartner.com/en/newsroom/press-releases/2025-02-26-lack-of-ai-ready-data-puts-ai-projects-at-risk), is that "through 2026, organizations will abandon 60% of AI projects unsupported by AI-ready data." The condition is the whole claim: drop it and you have a doom statistic, keep it and you have a specification for what to inspect.
+
+<Callout title="Ask which sentence the number came from.">
+  <p>If a vendor cannot give you the sentence, the sample, and the date behind a statistic in their pitch, the rest of their analysis has the same sourcing standard. The test works on us.</p>
+</Callout>
+
+## Six weeks, three phases, and an AI roadmap you can build from
+
+Listen in weeks 1 and 2, Assess in weeks 3 and 4, Decide in weeks 5 and 6; a single-workflow, single-system scope runs closer to two weeks. That range is our assertion about how we work, not a fact about the industry — no published readiness framework we could find states a duration at all. Judge it by the deliverables, not the clock.
+
+<Figure n={1} caption="Six weeks in three phases whose outputs chain. What Listen produces is what Assess reads; what Assess produces is what Decide reads; and what Decide produces — roadmap, ROI model, architecture sketch, costed pilot plan — is what a build starts from, not a recommendation to run one.">
+  <SixWeekPhases />
+</Figure>
+
+### Weeks 1 and 2: Listen
+
+**What we ask.** Not "what are your AI priorities." We ask the people doing the work to walk us through last Tuesday. What did you do twice. Which report do you rebuild by hand every month, and from what. Where does a job stop and wait, and on whom.
+
+**What we look at.** Artifacts, not the org chart. The spreadsheet that shadows the ERP because the ERP does not do the one thing. The shared inbox that is really a workflow. The fourteen naming conventions in the document register. The exception queue, and how far back it goes.
+
+**What comes out.** A workflow map, a stakeholder map, a systems inventory, and a candidate list with each workflow's exceptions named — exceptions decide whether it is automatable at all.
+
+### Weeks 3 and 4: Assess
+
+This is where an assessment earns its fee or becomes a survey with a cover page. Gartner's February 2025 guidance sets the standard — "Above all, if the data has issues, then the data is not ready for AI" — and these two weeks settle whether it does, by looking.
+
+**What we ask.** Of system owners: which fields are trustworthy, which are free text, which are populated by a script nobody owns any more. Who may see cost data, and how is that enforced. What happens when a vendor resubmits a drawing the night before a deadline.
+
+**What we look at.** Three things, at field or record level.
+
+*Real records, sampled.* Not a data dictionary and not a schema diagram. A few hundred actual rows or documents per source, counted for fill rate, format variance, and what populates each field the pilot reads.
+
+*Permissions and sharing exposure.* Microsoft's own [Copilot readiness guidance](https://learn.microsoft.com/en-us/microsoft-365/copilot/get-ready-copilot-sharepoint-advanced-management) describes this better than we could, from the vendor whose product depends on it going well. "Copilot and agents retrieve data from Microsoft Graph and respect existing permissions, sharing settings, and policies" reads as reassurance until the next line: "By default, SharePoint sets sharing settings to the most permissive option." The prescribed work is inspection-shaped: an "Everyone except external users" report over the top 100 sites shared with the whole organization in the past 28 days, and a flag on "Broken permission inheritance and complex access models." An assistant that faithfully respects permissions in an estate nobody ever tightened will faithfully surface the salary spreadsheet.
+
+*Write paths.* The system named as the system of record is frequently not the one the work lands in. Trace it by hand, once, per workflow.
+
+<Figure n={2} caption="The same workflow as claimed and as traced. An assessment that stops at the systems inventory designs for the top lane; the pilot has to live in the bottom one, where the write into the ERP is a monthly retype and the approval for the month exists only inside an email thread.">
+  <ClaimedVsTracedWritePath />
+</Figure>
+
+**What comes out.** A data readiness report that names fields rather than systems, an integration assessment saying what is connectable this quarter and what is blocked and by whom, risk and compliance notes, and the baseline measured on the top two candidates. That report is what a build like [making 15+ enterprise systems conversational](/work/conversational-enterprise-data/) is designed from: the governed answers rest on exactly these fields, permissions and write paths.
+
+### Weeks 5 and 6: Decide
+
+**What we ask.** Of the sponsor: which of these five would you fund this quarter. Who owns it in month four, by name. What does done look like, and will you sign that definition now.
+
+**What we look at.** Inference cost at real volume rather than demo volume, integration effort in engineer-weeks, and the exception rate from week 3 — usually what turns an attractive workflow unattractive.
+
+**What comes out.** A prioritized roadmap, an ROI model with the baseline in it, an architecture sketch, and a pilot plan that is production-shaped from week one: real system of record, the user's own identity, an evaluation set written from questions operators actually asked. That is our [method](/method/), and it is why the plan can be short — engineers who would build it need not explain the operation to a stranger.
+
+## Ready is not a score; it is six things with evidence behind them
+
+The standard, in the form we would want it applied to us. Column three is the evidence that turns "we think it's fine" into a fact.
+
+| Dimension | What "ready" concretely means | The evidence that settles it |
+| --- | --- | --- |
+| Field-level data quality | For every field the pilot reads: fill rate, format variance, what populates it. Free text named as free text. | A counted sample of a few hundred live records per source. Not a schema, not a data dictionary, not an estimate. |
+| Permissions and sharing exposure | What is shared organization-wide, where inheritance is broken, what the system returns for a user who should not see the answer. | An organization-wide sharing report, plus test queries under a restricted user's real identity, not a service account. |
+| Exceptions and edge cases | The top ten exception types, their frequency, and who resolves each. | A count from the real queue or log over a real period — a quarter, a turnaround, a shutdown — not a workshop estimate. |
+| Systems of record and write paths | For every field the pilot writes: the system that owns it, the path that writes it today, the approval that gates it. | One write traced end to end, spreadsheet and email included if that is where it happens. |
+| Baseline measurement | The workflow's current cost in hours or dollars, over a stated period, method written down. | A measurement someone took and signed, plus a definition of done the sponsor agreed in advance. |
+| Ownership in month four | A named person in an existing role, with time budgeted and a route to raise a defect. | Their name in the plan, and their manager's agreement, before the build starts. |
+
+Hand this to whoever is bidding your assessment and ask which rows their deliverables fill. It separates vendors faster than a capability deck.
+
+## What the published frameworks leave out
+
+The free frameworks are better than their reputation. Microsoft's Cloud Adoption Framework for AI names six phases — Strategy, Plan, Ready, Govern, Secure, Manage — as checklists, and its sequencing advice is close to ours: "Start with business problems. Look for where the organization needs better results before you consider AI at all." AWS's CAF-AI whitepaper, now marked for historical reference only, says "After an initial assessment, the adoption cycle begins, and it is based on four stages." Cisco's AI Readiness Index, October 2025, scores six pillars across more than 8,000 AI leaders and reports that "The most AI-ready organizations are 4x more likely to move pilots into production and 50% more likely to see measurable value" — the best available argument that readiness work is worth doing, published by a company that sells infrastructure, with dimensions that are self-scored rather than inspected.
+
+Notice where the assessment sits in that AWS sentence: one unelaborated clause before the real content starts. That is the gap. These are references rather than engagements. None of the three prescribes as a deliverable any of field-level data inspection, a permission and exception review of the live estate, or a costed pilot plan. A pillar score is your own opinion of your own estate, rendered as a number.
+
+We are careful about how strongly we claim the alternative. No study we found shows that engineer-written assessments produce better outcomes, and MIT's nearest adjacent finding is about buying versus building, with the report warning that its correlation does not prove causation. The argument is mechanical: a self-scored pillar and a counted sample of live records are different instruments, and only one can be wrong in a way you can find.
+
+## What breaks
+
+**Six weeks finds and costs the problem. It does not fix it.** Microsoft's own permission guidance describes its content assessment as something to rerun every 30 days — in a large tenant with broken inheritance and years of sharing links, remediation is a programme, not a sprint. Six weeks gets you the size of that programme, priced, so it can be funded or descoped, not discovered in month three.
+
+**Access is the binding constraint.** Without read access to a sample of real records, and an hour with the person who resolves exceptions, the rows that matter come back marked unknown. An honest unknown beats a confident guess, but it is not what you paid for. Arranging access before week one is the biggest thing a sponsor controls.
+
+**Sometimes the answer is do not build this.** Gartner's June 2025 recommendation that agentic AI be pursued only where it delivers clear value or ROI is boring and correct, and an assessment that never returns "not yet, and here is what would have to change" for at least one candidate is not inspecting anything. The MIT report listed energy and materials as near-zero adoption with minimal experimentation; in a capital-intensive operation that is sometimes defensible rather than a lag.
+
+## What it costs, who it takes, and what it is not
+
+**Price.** A fixed fee scoped to the size of the operation, quoted on the intro call, with a portion crediting toward the build if we do it. Treat any number quoted before someone has seen your estate as a guess.
+
+**Who has to be in the room.** Operators and supervisors in week one, system owners and whoever administers permissions in week three, the sponsor and someone from finance in week five. One conversation each, not a workshop.
+
+**What it is not.** Not a data-maturity assessment: that usually grades your data practice as a whole against a capability model, which is a different and legitimate purchase. This grades the fields the first pilot reads. Not a benchmark either — a percentile against your sector does not tell you which workflow to fund.
+
+## The decision in front of you
+
+The decision is not whether to do AI, and not which framework to adopt. It is this: which single workflow will you fund a costed pilot for next quarter, and who owns it in month four?
+
+Three questions tell you whether an assessment will answer it. Which rows of the table above will your deliverables fill, and with what evidence? Will the people who write this plan be the people who build it? On the last day, do I get a costed pilot plan with a named owner, or a maturity score?
+
+If the answers are good, buy it from whoever gave them. If you want ours, the intro call is thirty minutes, and we will say plainly whether six weeks is warranted or whether you already know enough to build. [Start there.](/contact/)
